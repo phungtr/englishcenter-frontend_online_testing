@@ -1,0 +1,81 @@
+.user-management {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  text-align: center;
+}
+
+.user-tilte h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+button {
+  background: #ff7eb3;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: #ff5c97;
+}
+
+.ant-table {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+.ant-table th {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.ant-table td {
+  color: white !important;
+}
+
+.ant-modal-content {
+  background: #222 !important;
+  color: white !important;
+  border-radius: 10px;
+}
+
+.ant-input,
+.ant-select-selector {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border-radius: 5px;
+}
+
+.ant-input::placeholder {
+  color: #ddd !important;
+}
+
+.ant-select-arrow {
+  color: white !important;
+}
+
+.ant-btn {
+  background: #ff7eb3 !important;
+  border: none !important;
+  transition: all 0.3s ease;
+}
+
+.ant-btn:hover {
+  background: #ff5c97 !important;
+}
+
+.ant-btn-dangerous {
+  background: #ff4d4d !important;
+}
+
+.ant-btn-dangerous:hover {
+  background: #ff3333 !important;
+}
