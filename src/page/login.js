@@ -1,48 +1,17 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 import '../style/style/login.css'; // CSS riêng cho trang
-
-const ForgotPassword = ({ onBack }) => {
-  const [resetEmail, setResetEmail] = useState('');
-  const [message, setMessage] = useState('');
-
-  const handleForgotPassword = (e) => {
-    e.preventDefault();
-    if (resetEmail) {
-      setMessage("A password reset email has been sent!");
-    } else {
-      setMessage("Please enter your email!");
-    }
-  };
-
-  return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleForgotPassword}>
-        <h2>Forgot Password</h2>
-        {message && <p className="message">{message}</p>}
-        <div className="form-group">
-          <label>Email:</label>
-          <input
-            type="email"
-            value={resetEmail}
-            onChange={(e) => setResetEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-        <button type="submit" className="login-button">Send Request</button>
-        <a href="#" onClick={onBack} className="back-link">← Quay lại</a>
-      </form>
-    </div>
-  );
-};
+import ForgotPassword from './forget';
+import { useNavigate } from 'react-router-dom';
+// import { getLoginPage } from '../sevrice/Api';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState(''); 
+  // const [acount, setAcount] = useState('');
   const [error, setError] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-
+  const navigate = useNavigate(); // Khai báo useNavigate()
   const handleLogin = (e) => {
     e.preventDefault();
     
@@ -51,10 +20,23 @@ const LoginPage = () => {
     
     if (email === fixedEmail && password === fixedPassword) {
       alert("Đăng nhập thành công!");
+      navigate('/home')
     } else {
       setError("Email hoặc mật khẩu không chính xác!");
     }
   };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const data = await getLoginPage();
+  //       setAcount(data);
+  //     } catch (error) {
+  //       console.error('Lỗi khi tải dữ liệu:', error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
 
   return (
     <div className="login-page">

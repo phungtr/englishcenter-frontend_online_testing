@@ -1,11 +1,21 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './page/login';
-
+import Home from './page/Home';
+import TeachingScheduleReport from './page/teacher/Teachingrepost';
+import UserManagement from './page/Staff/UserManagement';
+import Statistics from './page/Staff/Statistics';
 function App() {
   return (
-    <div className="App">
-      <LoginPage />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/teaching-schedule-report" element={<TeachingScheduleReport />} />
+        <Route path='/user-management' element={<UserManagement/>}/>
+        <Route path='/statistics' element={<Statistics/>}/>
+      </Routes>
+    </Router>
   );
 }
 
