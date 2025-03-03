@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { getLoginPage } from '../sevrice/Api';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState(''); 
   const [userdetails, setUserdetails] = useState('');
   const [error, setError] = useState('');
@@ -15,10 +15,10 @@ const LoginPage = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     
-    const fixedEmail = "test@example.com";
+    const fixedUser = "test@example.com";
     const fixedPassword = "123456";
     
-    if (userdetails?.email === fixedEmail && userdetails?.password === fixedPassword) {
+    if (userdetails?.username === fixedUser && userdetails?.password === fixedPassword) {
       alert("Đăng nhập thành công!");
       navigate('/home')
     } else {
@@ -52,8 +52,8 @@ const LoginPage = () => {
               <label>Email:</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your email"
                 required
               />
