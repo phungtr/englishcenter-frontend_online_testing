@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react';
+import React, { useState,useEffect} from 'react';
 import '../style/style/login.css'; // CSS riêng cho trang
 import ForgotPassword from './forget';
 import { useNavigate } from 'react-router-dom';
-// import { getLoginPage } from '../sevrice/Api';
+import { getLoginPage } from '../sevrice/Api';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState(''); 
-  // const [acount, setAcount] = useState('');
+  const [userdetails, setUserdetails] = useState('');
   const [error, setError] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate(); // Khai báo useNavigate()
@@ -18,24 +18,25 @@ const LoginPage = () => {
     const fixedEmail = "test@example.com";
     const fixedPassword = "123456";
     
-    if (email === fixedEmail && password === fixedPassword) {
+    if (userdetails?.email === fixedEmail && userdetails?.password === fixedPassword) {
       alert("Đăng nhập thành công!");
       navigate('/home')
     } else {
       setError("Email hoặc mật khẩu không chính xác!");
     }
   };
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const data = await getLoginPage();
-  //       setAcount(data);
-  //     } catch (error) {
-  //       console.error('Lỗi khi tải dữ liệu:', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getLoginPage();
+        setUserdetails(data);
+        console.log("đăng nhập",data)
+      } catch (error) {
+        console.error('Lỗi khi tải dữ liệu:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
 
   return (

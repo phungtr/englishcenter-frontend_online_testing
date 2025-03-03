@@ -1,22 +1,22 @@
 .user-management {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 40px auto;
   padding: 20px;
   background: linear-gradient(135deg, #6e8efb, #a777e3);
-  border-radius: 10px;
+  border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   color: #fff;
   text-align: center;
 }
 
-.user-tilte h2 {
+.user-title h2 {
   margin-bottom: 20px;
   font-size: 24px;
 }
 
-button {
-  background: #ff7eb3;
-  color: #fff;
+.add-button {
+  background: #28a745;
+  color: white;
   border: none;
   padding: 10px 15px;
   border-radius: 5px;
@@ -24,58 +24,56 @@ button {
   transition: all 0.3s ease;
 }
 
-button:hover {
-  background: #ff5c97;
+.add-button:hover {
+  background: #218838;
 }
 
-.ant-table {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: white !important;
-}
-
-.ant-table th {
-  background: rgba(255, 255, 255, 0.2) !important;
-}
-
-.ant-table td {
-  color: white !important;
-}
-
-.ant-modal-content {
-  background: #222 !important;
-  color: white !important;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: rgb(255, 255, 255);
   border-radius: 10px;
+  overflow: hidden;
 }
 
-.ant-input,
-.ant-select-selector {
-  background: rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
+th, td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid rgb(254, 255, 249);
+}
+
+th {
+  background: rgb(255, 255, 255);
+  color: black;
+}
+table th {
+  background-color:#fff;
+  cursor: pointer;
+}
+td {
+  color: #000000;
+}
+
+.User-management-button button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 12px;
   border-radius: 5px;
-}
-
-.ant-input::placeholder {
-  color: #ddd !important;
-}
-
-.ant-select-arrow {
-  color: white !important;
-}
-
-.ant-btn {
-  background: #ff7eb3 !important;
-  border: none !important;
+  cursor: pointer;
   transition: all 0.3s ease;
+  margin-right: 5px;
 }
 
-.ant-btn:hover {
-  background: #ff5c97 !important;
+.User-management-button button:hover {
+  background: #218838;
 }
 
-.ant-btn-dangerous {
-  background: #ff4d4d !important;
+.User-management-button button:last-child {
+  background: #dc3545;
 }
 
-.ant-btn-dangerous:hover {
-  background: #ff3333 !important;
+.User-management-button button:last-child:hover {
+  background: #c82333;
 }

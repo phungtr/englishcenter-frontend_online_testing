@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api'; // Thay đổi URL nếu cần
+const API_BASE_URL = 'http://localhost:8080/api'; // Thay đổi URL nếu cần
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -9,18 +9,9 @@ const api = axios.create({
   },
 });
 
-export const getTeachingScheduleReports = async () => {
-  try {
-    const response = await api.get('/teaching-schedule-reports');
-    return response.data;
-  } catch (error) {
-    console.error('Lỗi khi lấy dữ liệu báo cáo lịch giảng dạy:', error);
-    throw error;
-  }
-};
 export const getLoginPage =async() =>{
   try {
-    const response = await api.get('/Login');
+    const response = await api.get('/login');
     return response.data;
   } catch (error) {
     console.error('Lỗi khi lấy dữ liệu đăng nhập:', error);

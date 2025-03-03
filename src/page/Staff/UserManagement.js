@@ -5,7 +5,7 @@ const UserManagement = () => {
   const [users, setUsers] = useState([
     { id: 1, name: "Nguyen Van A", role: "Student", email: "a@example.com" },
     { id: 2, name: "Tran Thi B", role: "Teacher", email: "b@example.com" },
-    { id: 3, name: "Le Van C", role: "Staff", email: "c@example.com" },
+  
   ]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -30,10 +30,6 @@ const UserManagement = () => {
     setIsModalOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setUsers(users.filter((user) => user.id !== id));
-  };
-
   return (
     <div className="user-management">
       <div className="user-tilte"><h2>Quản lý người dùng</h2></div>
@@ -54,9 +50,8 @@ const UserManagement = () => {
               <td>{user.role}</td>
               <td>{user.email}</td>
 
-              <td>
-                <button onClick={() => showModal(user)}>Sửa</button>
-                <button onClick={() => handleDelete(user.id)}>Xóa</button>
+              <td >
+                <button style={{background:"#28a745"}} onClick={() => showModal(user)}>Sửa</button>
               </td>
             </tr>
           ))}
@@ -82,9 +77,9 @@ const UserManagement = () => {
             <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
               <option value="Student">Sinh viên</option>
               <option value="Teacher">Giáo viên</option>
-              <option value="Staff">Nhân viên</option>
+
             </select>
-            <div style={{display:"flex"}}>
+            <div className="User-management-button" style={{display:"flex"}}>
             <button onClick={handleOk}>Lưu</button>
             <button onClick={() => setIsModalOpen(false)}>Hủy</button>
             </div>
