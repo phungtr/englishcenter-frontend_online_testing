@@ -1,42 +1,29 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState,useEffect} from 'react';
+import React, { useState} from 'react';
 import '../style/style/login.css'; // CSS riêng cho trang
 import ForgotPassword from './forget';
 import { useNavigate } from 'react-router-dom';
-import { getLoginPage } from '../sevrice/Api';
+import { login } from '../sevrice/Api';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState(''); 
-  const [userdetails, setUserdetails] = useState('');
   const [error, setError] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate(); // Khai báo useNavigate()
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    
-    const fixedUser = "test@example.com";
-    const fixedPassword = "123456";
-    
-    if (userdetails?.username === fixedUser && userdetails?.password === fixedPassword) {
+    try {
+      const data = await login(username, password); // Gọi hàm login với dữ liệu từ form
+      // Giả sử server trả về token hoặc thông tin người dùng
+      localStorage.setItem('token', data.token); // Lưu token nếu server trả về
       alert("Đăng nhập thành công!");
-      navigate('/home')
-    } else {
+      console.log(username,password,"đăng nhập thành công");
+      navigate('/home');
+    } catch (error) {
       setError("Email hoặc mật khẩu không chính xác!");
     }
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getLoginPage();
-        setUserdetails(data);
-        console.log("đăng nhập",data)
-      } catch (error) {
-        console.error('Lỗi khi tải dữ liệu:', error);
-      }
-    };
-    fetchData();
-  }, []);
 
 
   return (
@@ -51,7 +38,7 @@ const LoginPage = () => {
             <div className="form-group">
               <label>Email:</label>
               <input
-                type="email"
+                type="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your email"
