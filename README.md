@@ -17,7 +17,7 @@ To set up the project locally, follow these steps:
 
 ### Clone the repository
 ```sh
-git clone https://github.com/your-repo/english-center-management.git
+git clone https://github.com/phungtr/englishcenter-frontend_online_testing.git
 cd english-center-management
 ```
 
