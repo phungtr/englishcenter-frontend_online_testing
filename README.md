@@ -54,7 +54,7 @@ english-center-management/
 ```
 
 ## Contributors
-- **Your Name** - Developer
+- Phùng Quàng Trà  - Developer
 
 ## License
 This project is licensed under the MIT License.
