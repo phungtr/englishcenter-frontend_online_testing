@@ -1,70 +1,60 @@
-# Getting Started with Create React App
+# English Center Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a web-based management system for English language centers, built using React.
 
-## Available Scripts
+## Features
+- User authentication (login/logout)
+- Dashboard with student and class management
+- CRUD operations for students, teachers, and courses
+- Reporting and statistics
 
-In the project directory, you can run:
+## Installation
+To set up the project locally, follow these steps:
 
-### `npm start`
+### Prerequisites
+- Node.js (latest LTS version recommended)
+- npm or yarn
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Clone the repository
+```sh
+git clone https://github.com/your-repo/english-center-management.git
+cd english-center-management
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Install dependencies
+```sh
+npm install
+```
 
-### `npm test`
+### Run the application
+```sh
+npm start
+```
+The application will be available at `http://localhost:3000`.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Testing
+This project includes UI tests using Jest and React Testing Library.
+To run the tests, use the following command:
+```sh
+npm test
+```
 
-### `npm run build`
+## Folder Structure
+```
+english-center-management/
+│── src/
+│   ├── components/        # Reusable components
+│   ├── pages/             # Application pages
+│   ├── services/          # API services
+│   ├── hooks/             # Custom React hooks
+│   ├── context/           # Context API for state management
+│── public/                # Static assets
+│── package.json           # Dependencies and scripts
+│── README.md              # Project documentation
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Contributors
+- **Your Name** - Developer
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## License
+This project is licensed under the MIT License.
