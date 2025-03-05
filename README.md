@@ -1,6 +1,6 @@
-# English Center Management System (develop)
+# Frontend English Center Management System (develop)
 
-This project is a web-based management system for English language centers, built using React.
+This project is a web-based management system for Frontend English language centers, built using React.
 
 ## Features
 - User authentication (login/logout)
