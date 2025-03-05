@@ -18,7 +18,7 @@ Dự án này là một hệ thống quản lý trung tâm tiếng Anh trên n�
 ### Sao Chép Kho Lưu Trữ  
 ```sh
 git clone https://github.com/phungtr/englishcenter-frontend_online_testing.git
-cd english-center-management
+cd .\englishcenter_frontend_online_testing\
 
 
 ### Cài đặt các gói phụ thuộc
