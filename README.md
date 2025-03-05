@@ -1,4 +1,4 @@
-# Frontend English Center Management System (develop)
+# English Center Management System Frontend (develop)
 
 This project is a web-based management system for Frontend English language centers, built using React.
 
