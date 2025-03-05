@@ -1,21 +1,60 @@
-# Getting Started with EnglishCenter
+# English Center Management System (develop)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a web-based management system for English language centers, built using React.
 
-## Available Scripts
+## Features
+- User authentication (login/logout)
+- Dashboard with student and class management
+- CRUD operations for students, teachers, and courses
+- Reporting and statistics
 
-In the project directory, you can run:
+## Installation
+To set up the project locally, follow these steps:
 
-### `npm start`
+### Prerequisites
+- Node.js (latest LTS version recommended)
+- npm or yarn
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Clone the repository
+```sh
+git clone https://github.com/your-repo/english-center-management.git
+cd english-center-management
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Install dependencies
+```sh
+npm install
+```
 
-### `npm test`
+### Run the application
+```sh
+npm start
+```
+The application will be available at `http://localhost:3000`.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Testing
+This project includes UI tests using Jest and React Testing Library.
+To run the tests, use the following command:
+```sh
+npm test
+```
 
+## Folder Structure
+```
+english-center-management/
+│── src/
+│   ├── components/        # Reusable components
+│   ├── pages/             # Application pages
+│   ├── services/          # API services
+│   ├── hooks/             # Custom React hooks
+│   ├── context/           # Context API for state management
+│── public/                # Static assets
+│── package.json           # Dependencies and scripts
+│── README.md              # Project documentation
+```
+
+## Contributors
+- Phùng Quàng Trà  - Developer
+
+## License
+This project is licensed under the MIT License.
