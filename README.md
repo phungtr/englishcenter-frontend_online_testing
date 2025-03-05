@@ -1,45 +1,45 @@
-# English Center Management System (develop)
+# Hệ Thống Quản Lý Trung Tâm Tiếng Anh (Frontend)
 
-This project is a web-based management system for English language centers, built using React.
+Dự án này là một hệ thống quản lý trung tâm tiếng Anh trên nền tảng web, được xây dựng bằng React.
 
-## Features
-- User authentication (login/logout)
-- Dashboard with student and class management
-- CRUD operations for students, teachers, and courses
-- Reporting and statistics
+## Tính Năng
+- Xác thực người dùng (đăng nhập/đăng xuất)  
+- Bảng điều khiển với quản lý học viên và lớp học  
+- Các thao tác CRUD cho học viên, giáo viên và khóa học  
+- Báo cáo và thống kê  
 
-## Installation
-To set up the project locally, follow these steps:
+## Cài Đặt  
+Để thiết lập dự án trên máy tính của bạn, hãy làm theo các bước sau:
 
-### Prerequisites
-- Node.js (latest LTS version recommended)
-- npm or yarn
+### Yêu Cầu  
+- Node.js (khuyến nghị phiên bản LTS mới nhất)  
+- npm hoặc yarn  
 
-### Clone the repository
+### Sao Chép Kho Lưu Trữ  
 ```sh
-git clone https://github.com/your-repo/english-center-management.git
+git clone https://github.com/phungtr/englishcenter-frontend_online_testing.git
 cd english-center-management
-```
 
-### Install dependencies
+
+### Cài đặt các gói phụ thuộc
 ```sh
 npm install
 ```
 
-### Run the application
+### Chạy ứng dụng
 ```sh
 npm start
 ```
-The application will be available at `http://localhost:3000`.
+Ứng dụng sẽ chạy tại `http://localhost:3000`.
 
 ## Testing
-This project includes UI tests using Jest and React Testing Library.
-To run the tests, use the following command:
+Dự án này bao gồm các bài kiểm thử giao diện người dùng (UI) bằng Jest và React Testing Library.
+Để chạy kiểm thử, sử dụng lệnh sau:
 ```sh
 npm test
 ```
 
-## Folder Structure
+## Cấu trúc thư mục
 ```
 english-center-management/
 │── src/
@@ -53,8 +53,6 @@ english-center-management/
 │── README.md              # Project documentation
 ```
 
-## Contributors
-- Phùng Quàng Trà  - Developer
+## Người đóng góp
+- Phùng Quàng Trà  - Developer 
 
-## License
-This project is licensed under the MIT License.
