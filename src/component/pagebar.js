@@ -5,6 +5,13 @@ import { useNavigate } from 'react-router-dom';
 const Navbar = () => {
   const navigate = useNavigate();
 
+  // const [role, setRole] = useState('');
+
+  // useEffect(() => {
+  //   const storedRole = localStorage.getItem('role');
+  //   setRole(storedRole);
+  // }, []);
+
   const handleLogout = () => {
     alert('Đăng xuất thành công!');
     navigate('/');
@@ -15,7 +22,7 @@ const Navbar = () => {
      </div>
       <div>
       <ul className="nav-list">
-        <li><Link to="/home">Trang chủ</Link></li>
+        <li><Link to="/Admin-home">Trang chủ</Link></li>
         <li><Link to="/teaching-schedule-report">Báo cáo lịch giáo viên</Link></li>
         <li><Link to="/user-management">Quản lý người dùng</Link></li>
         <li><Link to="/statistics">Thống kê</Link></li>

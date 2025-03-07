@@ -14,12 +14,11 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const data = await login(username, password); // Gọi hàm login với dữ liệu từ form
-      // Giả sử server trả về token hoặc thông tin người dùng
-      localStorage.setItem('token', data.token); // Lưu token nếu server trả về
-      alert("Đăng nhập thành công!");
-      console.log(username,password,"đăng nhập thành công");
-      navigate('/home');
+      const data = await login(username, password);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('role', data.role); // Lưu role vào localStorage
+      alert(`Đăng nhập thành công! Vai trò: ${data.role}`);
+      navigate('/Admin-home');
     } catch (error) {
       setError("Email hoặc mật khẩu không chính xác!");
     }

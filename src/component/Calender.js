@@ -1,22 +1,37 @@
 import React from "react";
 import "../style/style/Calender.css";
 import * as XLSX from "xlsx";
-
+// import { fetchschedule } from "../sevrice/Api";
 const Schedule = () => {
-  const schedule = [
-    { day: "Mon", date: "24/02/2025", start: "07:00", end: "09:40", period: "Tiết 1-3", title: "Tiếng anh trẻ em", teacher: "Hà Xuân Bách", style: "event game" },
-    { day: "Mon", date: "24/02/2025", start: "09:45", end: "12:25", period: "Tiết 4-6", title: "Ngữ pháp nâng cao", teacher: "Đoàn Nguyễn Thành Hưng", style: "event uiux" },
-    { day: "Tue", date: "25/02/2025", start: "07:55", end: "09:40", period: "Tiết 2-3", title: "Tiếng anh cấp tốc", teacher: "Nguyễn Văn Dưỡng ", style: "event design" },
-    { day: "Tue", date: "25/02/2025", start: "09:45", end: "12:25", period: "Tiết 4-6", title: "Luyện nghe và nói", teacher: "Vũ Minh Đăng", style: "event requirement" },
-    { day: "Wed", date: "26/02/2025", start: "07:00", end: "09:40", period: "Tiết 1-3", title: "Tiếng anh chuyên nghành", teacher: "Lê Anh Nuôi ", style: "event testing" },
-    { day: "Thu", date: "27/02/2025", start: "07:00", end: "09:40", period: "Tiết 1-3", title: "Tiếng anh trẻ em", teacher: "Hà Xuân Bách", style: "event game" },
-    { day: "Thu", date: "27/02/2025", start: "09:45", end: "11:30", period: "Tiết 4-5", title: "Luyện nghe và nói", teacher: "Vũ Minh Đăng", style: "event requirement" },
-    { day: "Fri", date: "28/02/2025", start: "07:00", end: "08:45", period: "Tiết 1-2", title: "Tiếng anh chuyên nghành", teacher: "Lê Anh Nuôi", style: "event testing" },
-    { day: "Fri", date: "28/02/2025", start: "08:50", end: "11:30", period: "Tiết 3-5", title: "Tiếng anh cấp tốc", teacher: "Nguyễn Văn Dưỡng", style: "event design" }
+  // const [schedule, setSchedule] = useState([]);
+
+  // useEffect(() => {
+  //   const loadSchedule = async () => {
+  //     try {
+  //       const data = await fetchschedule(Schedule);
+  //       setSchedule(data);
+  //       localStorage.setItem('token', data.token);
+  //     } catch (error) {
+  //       console.error("Không thể tải thời khóa biểu:", error);
+  //     }
+  //   };
+
+  //   loadSchedule();
+  // }, []);
+  const Schedule = [
+    { day: "Mon", date: "24/02/2025", startTime: "07:00", endTime: "09:40", Class: "Tiếng anh trẻ em", teacher: "Hà Xuân Bách", style: "event game" },
+    { day: "Mon", date: "24/02/2025", startTime: "09:45", endTime: "12:25", Class: "Ngữ pháp nâng cao", teacher: "Đoàn Nguyễn Thành Hưng", style: "event uiux" },
+    { day: "Tue", date: "25/02/2025", startTime: "07:55", endTime: "09:40", Class: "Tiếng anh cấp tốc", teacher: "Nguyễn Văn Dưỡng ", style: "event design" },
+    { day: "Tue", date: "25/02/2025", startTime: "09:45", endTime: "12:25", Class: "Luyện nghe và nói", teacher: "Vũ Minh Đăng", style: "event requirement" },
+    { day: "Wed", date: "26/02/2025", startTime: "07:00", endTime: "09:40", Class: "Tiếng anh chuyên nghành", teacher: "Lê Anh Nuôi ", style: "event testing" },
+    { day: "Thu", date: "27/02/2025", startTime: "07:00", endTime: "09:40", Class: "Tiếng anh trẻ em", teacher: "Hà Xuân Bách", style: "event game" },
+    { day: "Thu", date: "27/02/2025", startTime: "09:45", endTime: "11:30", Class: "Luyện nghe và nói", teacher: "Vũ Minh Đăng", style: "event requirement" },
+    { day: "Fri", date: "28/02/2025", startTime: "07:00", endTime: "08:45", Class: "Tiếng anh chuyên nghành", teacher: "Lê Anh Nuôi", style: "event testing" },
+    { day: "Fri", date: "28/02/2025", startTime: "08:50", endTime: "11:30", Class: "Tiếng anh cấp tốc", teacher: "Nguyễn Văn Dưỡng", style: "event design" }
   ];
 
   const exportToExcel = () => {
-    const filteredSchedule = schedule.map(({ style, ...rest }) => rest);
+    const filteredSchedule = Schedule.map(({ style, ...rest }) => rest);
     const ws = XLSX.utils.json_to_sheet(filteredSchedule);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Schedule");
@@ -39,11 +54,11 @@ const Schedule = () => {
       <div className="time-cell-row">
         <div className="time-cell">GMT+7</div>
         {days.map((day) => {
-          const event = schedule.find(e => e.day === day); // Lấy ngày từ sự kiện đầu tiên của ngày đó
+          const schedule = Schedule.find(e => e.day === day); // Lấy ngày từ sự kiện đầu tiên của ngày đó
           return (
             <div key={day} className="day-header">
               <div className="day">{day}</div>
-              <div className="date">{event ? event.date : ""}</div>
+              <div className="date">{schedule ? schedule.date : ""}</div>
             </div>
           );
         })}
@@ -60,15 +75,15 @@ const Schedule = () => {
           </div>
 
           <div className="calendar">
-          {schedule.map((event, index) => {
-              const top = timeToPosition(event.start);
-              const height = timeToPosition(event.end) - top;
-              const dayIndex = days.indexOf(event.day);
+          {Schedule.map((schedule, index) => {
+              const top = timeToPosition(schedule.startTime);
+              const height = timeToPosition(schedule.endTime) - top;
+              const dayIndex = days.indexOf(schedule.day);
 
               return (
                 <div
                   key={index}
-                  className={`event ${event.style}`}
+                  className={`event ${schedule.style}`}
                   style={{
                     gridColumnStart: dayIndex + 2,
                     top: `${top}px`,
@@ -82,10 +97,10 @@ const Schedule = () => {
                   }}
                 >
                   <div className="event-content">
-                    <div className="event-title" style={{ fontSize: "16px", fontWeight: "bold",textAlign :"center",margin:"20px 0 0 0"}}>{event.title}</div>
+                    <div className="event-title" style={{ fontSize: "16px", fontWeight: "bold",textAlign :"center",margin:"20px 0 0 0"}}>{schedule.Class}</div>
                     <div className="Des">
-                    <div className="event-time" style={{margin:"10px 0 0 0"}}>{event.start} - {event.end} ({event.period})</div>
-                    <div className="event-teacher">{event.teacher}</div>
+                    <div className="event-time" style={{margin:"10px 0 0 0"}}>{schedule.startTime} - {schedule.endTime}</div>
+                    <div className="event-teacher">{schedule.teacher}</div>
                     </div>
                   </div>
                 </div>

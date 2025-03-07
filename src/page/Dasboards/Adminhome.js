@@ -1,10 +1,24 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 
-import "../style/style/Home.css"
-import Navbar from '../component/pagebar';
+import "../../style/style/Home.css"
+import Navbar from '../../component/pagebar';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
 const Home = () => {
 
+    const data = [
+      { name: 'Lớp A', hocVien: 30, hoanThanh: 25 },
+      { name: 'Lớp B', hocVien: 25, hoanThanh: 20 },
+      { name: 'Lớp C', hocVien: 40, hoanThanh: 35 },
+    ];
+  
+    const pieData = [
+      { name: 'Hoàn thành', value: 80 },
+      { name: 'Chưa hoàn thành', value: 20 },
+    ];
+  
+    const COLORS = ['#00C49F', '#FF8042'];
+  
 
   return (
     <div className="home-container">
@@ -30,6 +44,46 @@ const Home = () => {
       </p>
       </div>
       </div>
+
+      <div style={{background:"#fff",opacity:"0.95",display:"flex",borderRadius:"20px"}}>
+      {/* Biểu đồ thống kê */}
+      <div className="p-4 border rounded-lg shadow bg-white">
+        <h2 className="text-xl font-bold mb-4"
+        style={{
+        paddingBottom: "40px",
+        fontSize: "40px",
+        }}>Biểu đồ thống kê</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6" style={{
+                display: "flex",
+                width: "1100px",
+                justifyContent: "space-around",
+            }}>
+          <BarChart width={400} height={300} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="hocVien" fill="#8884d8" name="Học viên" />
+            <Bar dataKey="hoanThanh" fill="#82ca9d" name="Hoàn thành" />
+          </BarChart>
+          <PieChart width={300} height={300}>
+            <Pie
+              data={pieData}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              outerRadius={100}
+              dataKey="value"
+            >
+              {pieData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </div>
+      </div>
+      </div>
+
       {/* Footer */}
       <footer className="footer-container">
       <div className="footer-section">
