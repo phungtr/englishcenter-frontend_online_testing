@@ -17,7 +17,7 @@ export const login = async (username, password) => {
 };
 export const getStudents = async (Student) =>  {
   try {
-    const response = await api.post('/students/all', {Student});
+    const response = await api.get('/students/all', {params:Student});
     return response.data;
   } catch (error) {
     console.error('Lỗi khi đăng nhập:', error);
@@ -27,7 +27,7 @@ export const getStudents = async (Student) =>  {
 
 export const getTeachers = async (Teacher) =>  {
   try {
-    const response = await api.post('/teachers/all', {Teacher});
+    const response = await api.get('/teachers/all', {params: Teacher});
     return response.data;
   } catch (error) {
     console.error('Lỗi khi đăng nhập:', error);
@@ -36,7 +36,7 @@ export const getTeachers = async (Teacher) =>  {
 };
 export const classes = async (Classes) =>  {
   try {
-    const response = await api.post('/classes/all', {Classes});
+    const response = await api.get('/classes/all', {Classes});
     return response.data;
   } catch (error) {
     console.error('Lỗi khi đăng nhập:', error);
@@ -44,9 +44,9 @@ export const classes = async (Classes) =>  {
   }
 };
 
-export const fetchschedule = async (Schedule) =>  {
+export const schedules = async (schedule) => {
   try {
-    const response = await api.post('/schedule/getAll', {Schedule});
+    const response = await api.get('/schedule/getAll', { params: schedule });
     return response.data;
   } catch (error) {
     console.error('Lỗi khi đăng nhập:', error);

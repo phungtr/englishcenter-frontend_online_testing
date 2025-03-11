@@ -7,14 +7,16 @@ const UserManagement = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [form, setForm] = useState({ name: "", role: "Student", email: "" });
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const studentData = await getStudents();
         const teacherData = await getTeachers();
-        const formattedStudents = studentData.map((s) => ({ id: s.svId, name: s.svName, role: "Student", email: s.svEmail }));
-        const formattedTeachers = teacherData.map((t) => ({ id: t.tcId, name: t.tcName, role: "Teacher", email: t.tcEmail }));
+        const formattedStudents = studentData.map((s) => ({ id: s.svId, name: s.svName, role: "STUDENT", email: s.svEmail }));
+        const formattedTeachers = teacherData.map((t) => ({ id: t.tcId, name: t.tcName, role: "TEACHER", email: t.tcEmail }));
         setUsers([...formattedStudents, ...formattedTeachers]);
+        console.log("Merged Users:", [...formattedStudents, ...formattedTeachers]);
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error);
       }
