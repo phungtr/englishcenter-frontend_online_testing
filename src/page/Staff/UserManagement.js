@@ -5,7 +5,7 @@ const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [form, setForm] = useState({ name: "", role: "Student", email: "" });
+  const [form, setForm] = useState({ name: "", role: "STUDENT", email: "" });
 
 
   useEffect(() => {
