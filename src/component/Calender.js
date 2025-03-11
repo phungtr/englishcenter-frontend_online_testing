@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 import React, {useEffect,useState} from "react";
 import "../style/style/Calender.css";
 import * as XLSX from "xlsx";
@@ -34,6 +35,7 @@ const Schedule = () => {
   //   { day: "Fri", date: "28/02/2025", startTime: "07:00", endTime: "08:45", Class: "Tiếng anh chuyên nghành", teacher: "Lê Anh Nuôi", style: "event testing" },
   //   { day: "Fri", date: "28/02/2025", startTime: "08:50", endTime: "11:30", Class: "Tiếng anh cấp tốc", teacher: "Nguyễn Văn Dưỡng", style: "event design" }
   // ];
+  
 
   const exportToExcel = () => {
     const filteredSchedule = schedule.map(({ style, ...rest }) => rest);
@@ -82,6 +84,7 @@ const Schedule = () => {
               const top = timeToPosition(schedule?.startTime);
               const height = timeToPosition(schedule?.endTime) - top;
               const dayIndex = days.indexOf(schedule?.startTime);
+              {/* Format ngay theo date chu khong phai la set day|+ */}
 
               return (
                 <div

@@ -2,25 +2,31 @@ import React, { useState, useEffect } from 'react';
 import '../../page/teacher/TeachingScheduleReport.css';
 import Schedule from '../../component/Calender'
 import Navbar from '../../component/pagebar';
-// import { fetchschedule } from '../../sevrice/Api';
+// import { getTeachers } from '../../sevrice/Api';
 
 const TeachingScheduleReport = () => {
-  const [schedule, setSchedule] = useState([]);
-  const [filteredSchedules, setFilteredSchedule] = useState([]);
+  const [teacher, setTeacher] = useState([]);
+  const [filteredTeachers, setFilteredTeacher] = useState([]);
   const [filters, setFilters] = useState({ lecturer: '', course: '', date: '' });
 
+
   // useEffect(() => {
-  //   const loadSchedule = async () => {
+  //   const loadTeacher = async () => {
   //     try {
-  //       const data = await fetchschedule(schedule);
-  //       setSchedule(data);
-  //       setFilteredSchedule(data);
+
+  //       const data = await getTeachers({});
+  //       setTeacher(data);
+
+  //       if (data.token) {
+  //         localStorage.setItem('token', data.token);
+  //       }
   //     } catch (error) {
-  //       console.error('Lỗi khi tải lịch giảng dạy:', error);
+  //       console.error("Không thể tải thời khóa biểu:", error);
   //     }
   //   };
-  //   loadSchedule();
-  // }, [schedule]);
+
+  //   loadTeachers();
+  // }, []);
   useEffect(() => {
     // Fake data for demo
     const demoData = [
@@ -30,8 +36,8 @@ const TeachingScheduleReport = () => {
       { id: 4, lecturer: 'Lê Anh Nuôi', course: 'Tiếng anh chuyên ngành', dateTime: '2025-02-26 07:00' },
       { id: 5, lecturer: 'Đoàn Nguyễn Thành Hưng', course: 'Ngữ pháp nâng cao', dateTime: '2025-02-24 09:45' }
     ];
-    setSchedule(demoData);
-    setFilteredSchedule(demoData);
+    setTeacher(demoData);
+    setFilteredTeacher(demoData);
   }, []);
 
   const handleFilterChange = (e) => {
@@ -44,14 +50,14 @@ const TeachingScheduleReport = () => {
   };
 
   const applyFilters = (currentFilters) => {
-    let filtered = schedule.filter(schedule => {
+    let filtered = teacher.filter(teacher => {
       return (
-        (currentFilters.lecturer ? schedule.lecturer.toLowerCase().includes(currentFilters.lecturer.toLowerCase()) : true) &&
-        (currentFilters.course ? schedule.course.toLowerCase().includes(currentFilters.course.toLowerCase()) : true) &&
-        (currentFilters.date ? schedule.dateTime.startsWith(currentFilters.date) : true)
+        (currentFilters.lecturer ? teacher.lecturer.toLowerCase().includes(currentFilters.lecturer.toLowerCase()) : true) &&
+        (currentFilters.course ? teacher.course.toLowerCase().includes(currentFilters.course.toLowerCase()) : true) &&
+        (currentFilters.date ? teacher.dateTime.startsWith(currentFilters.date) : true)
       );
     });
-    setFilteredSchedule(filtered);
+    setFilteredTeacher(filtered);
   };
 
   return (
@@ -64,12 +70,12 @@ const TeachingScheduleReport = () => {
         <input type="date" name="date" value={filters.date} onChange={handleFilterChange} />
       </div>
       <div className="schedule-grid">
-        {filteredSchedules.map((schedule) => (
-          <div key={schedule.id} className="schedule-item">
-            <div className="course-title">{schedule.course}</div>
+        {filteredTeachers.map((teacher) => (
+          <div key={teacher.id} className="schedule-item">
+            <div className="course-title">{teacher.course}</div>
             <div className="course-info">
-              <p>Giảng viên: {schedule.lecturer}</p>
-              <p>Thời gian: {schedule.dateTime}</p>
+              <p>Giảng viên: {teacher.lecturer}</p>
+              <p>Thời gian: {teacher.dateTime}</p>
             </div>
           </div>
         ))}
