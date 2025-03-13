@@ -4,7 +4,7 @@ import React from 'react';
 import "../../style/style/Home.css"
 import Navbar from '../../component/pagebar';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
-const Home = () => {
+const AdminHome = () => {
 
     const data = [
       { name: 'Lớp A', hocVien: 30, hoanThanh: 25 },
@@ -114,4 +114,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default AdminHome;

@@ -11,8 +11,8 @@ const UserManagement = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const studentData = await getStudents();
-        const teacherData = await getTeachers();
+        const studentData = await getStudents({});
+        const teacherData = await getTeachers({});
         const formattedStudents = studentData.map((s) => ({ id: s.svId, name: s.svName, role: "STUDENT", email: s.svEmail }));
         const formattedTeachers = teacherData.map((t) => ({ id: t.tcId, name: t.tcName, role: "TEACHER", email: t.tcEmail }));
         setUsers([...formattedStudents, ...formattedTeachers]);

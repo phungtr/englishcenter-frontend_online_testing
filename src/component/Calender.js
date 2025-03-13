@@ -1,4 +1,3 @@
-/* eslint-disable no-lone-blocks */
 import React, {useEffect,useState} from "react";
 import "../style/style/Calender.css";
 import * as XLSX from "xlsx";
@@ -13,6 +12,7 @@ const Schedule = () => {
         // Gọi API, truyền đối tượng rỗng nếu không cần tham số
         const data = await schedules({});
         setSchedule(data);
+        console.log(data);
         // Nếu dữ liệu trả về có token, bạn có thể lưu vào localStorage:
         if (data.token) {
           localStorage.setItem('token', data.token);
@@ -24,18 +24,15 @@ const Schedule = () => {
 
     loadSchedule();
   }, []);
-  // const Schedule = [
-  //   { day: "Mon", date: "24/02/2025", startTime: "07:00", endTime: "09:40", Class: "Tiếng anh trẻ em", teacher: "Hà Xuân Bách", style: "event game" },
-  //   { day: "Mon", date: "24/02/2025", startTime: "09:45", endTime: "12:25", Class: "Ngữ pháp nâng cao", teacher: "Đoàn Nguyễn Thành Hưng", style: "event uiux" },
-  //   { day: "Tue", date: "25/02/2025", startTime: "07:55", endTime: "09:40", Class: "Tiếng anh cấp tốc", teacher: "Nguyễn Văn Dưỡng ", style: "event design" },
-  //   { day: "Tue", date: "25/02/2025", startTime: "09:45", endTime: "12:25", Class: "Luyện nghe và nói", teacher: "Vũ Minh Đăng", style: "event requirement" },
-  //   { day: "Wed", date: "26/02/2025", startTime: "07:00", endTime: "09:40", Class: "Tiếng anh chuyên nghành", teacher: "Lê Anh Nuôi ", style: "event testing" },
-  //   { day: "Thu", date: "27/02/2025", startTime: "07:00", endTime: "09:40", Class: "Tiếng anh trẻ em", teacher: "Hà Xuân Bách", style: "event game" },
-  //   { day: "Thu", date: "27/02/2025", startTime: "09:45", endTime: "11:30", Class: "Luyện nghe và nói", teacher: "Vũ Minh Đăng", style: "event requirement" },
-  //   { day: "Fri", date: "28/02/2025", startTime: "07:00", endTime: "08:45", Class: "Tiếng anh chuyên nghành", teacher: "Lê Anh Nuôi", style: "event testing" },
-  //   { day: "Fri", date: "28/02/2025", startTime: "08:50", endTime: "11:30", Class: "Tiếng anh cấp tốc", teacher: "Nguyễn Văn Dưỡng", style: "event design" }
+  // const schedule = [
+  //   { day: "Tue", date: "25/02/2025", startTime: "07:55", endTime: "09:40", className: "Tiếng anh cấp tốc", teacherName: "Nguyễn Văn Dưỡng " },
+  //   { day: "Tue", date: "25/02/2025", startTime: "09:45", endTime: "12:25", className: "Luyện nghe và nói", teacherName: "Vũ Minh Đăng" },
+  //   { day: "Wed", date: "26/02/2025", startTime: "07:00", endTime: "09:40", className: "Tiếng anh chuyên nghành", teacherName: "Lê Anh Nuôi "},
+  //   { day: "Thu", date: "27/02/2025", startTime: "07:00", endTime: "09:40", className: "Tiếng anh trẻ em", teacherName: "Hà Xuân Bách" },
+  //   { day: "Thu", date: "27/02/2025", startTime: "09:45", endTime: "11:30", className: "Luyện nghe và nói", teacherName: "Vũ Minh Đăng" },
+  //   { day: "Fri", date: "28/02/2025", startTime: "07:00", endTime: "08:45", className: "Tiếng anh chuyên nghành",teacherName: "Lê Anh Nuôi" },
+  //   { day: "Fri", date: "28/02/2025", startTime: "08:50", endTime: "11:30", className: "Tiếng anh cấp tốc", teacherName: "Nguyễn Văn Dưỡng" }
   // ];
-  
 
   const exportToExcel = () => {
     const filteredSchedule = schedule.map(({ style, ...rest }) => rest);
@@ -45,7 +42,7 @@ const Schedule = () => {
     XLSX.writeFile(wb, "ThoiKhoaBieu.xlsx");
   };
 
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+  const days = [ "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy","Chủ Nhật"];
   const timeSlots = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00"];
   const pxPerMinute = 1;
 
@@ -53,6 +50,14 @@ const Schedule = () => {
     const [hour, minute] = time.split(":").map(Number);
     return ((hour - 7) * 60 + minute) * pxPerMinute;
   };
+
+  const getDayIndex = (dateString) => {
+    const [day, month, year] = dateString.split("/").map(Number);
+    const date = new Date(year, month - 1, day);
+    const dayOfWeek = date.getDay();
+    return dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Thứ Hai = 0, ..., Chủ Nhật = 6
+  };
+
   
   return (
 <div className="schedule-fixed">
@@ -83,20 +88,19 @@ const Schedule = () => {
           {schedule.map((schedule, index) => {
               const top = timeToPosition(schedule?.startTime);
               const height = timeToPosition(schedule?.endTime) - top;
-              const dayIndex = days.indexOf(schedule?.startTime);
-              {/* Format ngay theo date chu khong phai la set day|+ */}
-
+              const dayIndex = getDayIndex(schedule?.date);
+              const eventClass = `event ${schedule.className.toLowerCase().replace(/\s+/g, "-")}`;
               return (
                 <div
                   key={index}
-                  className={`event ${schedule?.scheduleId}`}
+                  className={eventClass}
                   style={{
                     gridColumnStart: dayIndex + 2,
                     top: `${top}px`,
                     height: `${height}px`,
                     position: "absolute",
-                    left: `${dayIndex * 356.5}px`,
-                    width: "356.5px",
+                    left: `${dayIndex * 255}px`,
+                    width: "255px",
                     borderRadius: "8px",
                     fontWeight: "bold",
                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",

@@ -11,7 +11,7 @@ const TeachingScheduleReport = () => {
 
 
   // useEffect(() => {
-  //   const loadTeacher = async () => {
+  //   const loadTeachers = async () => {
   //     try {
 
   //       const data = await getTeachers({});

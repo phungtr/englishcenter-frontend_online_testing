@@ -1,10 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './page/login';
-import Home from './page/Dasboards/Adminhome';
 import TeachingScheduleReport from './page/teacher/Teachingrepost';
 import UserManagement from './page/Staff/UserManagement';
 import Statistics from './page/Staff/Statistics';
+import AdminHome from './page/Dasboards/Adminhome';
+import TeacherHome from './page/Dasboards/Teacherhome';
+import StudentHome from './page/Dasboards/Studenthome';
 
 // import ReportStatistics from './page/Dasboard';
 function App() {
@@ -21,9 +23,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/Admin-home" element={<Home />} />
-        {/*  */}
-        {/*  */}
+        <Route path="/Admin-home" element={<AdminHome/>} />
+        <Route path="/Teacher-home" element={<TeacherHome />} />
+        <Route path="/Student-home" element={<StudentHome/>} />
         <Route path="/teaching-schedule-report" element={<TeachingScheduleReport />} />
         <Route path='/user-management' element={<UserManagement/>}/>
         <Route path='/statistics' element={<Statistics/>}/>

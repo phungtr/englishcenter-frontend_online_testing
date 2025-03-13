@@ -11,18 +11,28 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate(); // Khai báo useNavigate()
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const data = await login(username, password);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('role', data.role); // Lưu role vào localStorage
-      alert(`Đăng nhập thành công! Vai trò: ${data.role}`);
-      navigate('/Admin-home');
-    } catch (error) {
-      setError("Email hoặc mật khẩu không chính xác!");
+const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    const data = await login(username, password);
+    if (!data.token || !data.role) {
+      throw new Error("Dữ liệu đăng nhập không hợp lệ!");
     }
-  };
+
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('role', data.role);
+    alert(`Đăng nhập thành công! Vai trò: ${data.role}`);
+
+    if (data.role === 'ADMIN') navigate('/Admin-home');
+    else if (data.role === 'TEACHER') navigate('/Teacher-home');
+    else if (data.role === 'STUDENT') navigate('/Student-home');
+    else throw new Error("Vai trò không hợp lệ!");
+
+  } catch (error) {
+    console.error("Lỗi đăng nhập:", error);
+    setError("Email hoặc mật khẩu không chính xác!");
+  }
+};
 
 
   return (

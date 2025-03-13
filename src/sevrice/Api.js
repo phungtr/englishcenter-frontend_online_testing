@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api'; // Thay đổi URL nếu cần
+const API_BASE_URL = 'http://26.253.189.203:8080/api'; // Thay đổi URL nếu cần
 
 const api = axios.create({
   baseURL: API_BASE_URL,
