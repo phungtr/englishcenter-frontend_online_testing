@@ -32,7 +32,7 @@ npm start
 ```
 Ứng dụng sẽ chạy tại `http://localhost:3000`.
 
-## Testing
+## Chạy kiểm thử
 Dự án này bao gồm các bài kiểm thử giao diện người dùng (UI) bằng Jest và React Testing Library.
 Để chạy kiểm thử, sử dụng lệnh sau:
 ```sh
@@ -54,5 +54,5 @@ english-center-management/
 ```
 
 ## Người đóng góp
-- Phùng Quàng Trà  - Developer 
+- Phùng Quang Trà  - Developer 
 
