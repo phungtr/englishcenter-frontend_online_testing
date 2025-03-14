@@ -2,7 +2,7 @@
 import React from 'react';
 
 import "../../style/style/Home.css"
-import Navbar from '../../component/pagebar';
+import Navbar from '../../component/Staffnavbar';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
 const AdminHome = () => {
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getStudents, getTeachers } from "../../sevrice/Api";
+import { getAllStudents, getAllTeachers } from "../../sevrice/Api";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -11,37 +11,75 @@ const UserManagement = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const studentData = await getStudents({});
-        const teacherData = await getTeachers({});
-        const formattedStudents = studentData.map((s) => ({ id: s.svId, name: s.svName, role: "STUDENT", email: s.svEmail }));
-        const formattedTeachers = teacherData.map((t) => ({ id: t.tcId, name: t.tcName, role: "TEACHER", email: t.tcEmail }));
-        setUsers([...formattedStudents, ...formattedTeachers]);
-        console.log("Merged Users:", [...formattedStudents, ...formattedTeachers]);
+        const [studentData, teacherData] = await Promise.all([
+          getAllStudents(),
+          getAllTeachers(),
+        ]);
+  
+        const formattedStudents = studentData.map((s) => ({
+          id: s.svId, name: s.svName, role: "STUDENT", email: s.svEmail,
+        }));
+  
+        const formattedTeachers = teacherData.map((t) => ({
+          id: t.tcId, name: t.tcName, role: "TEACHER", email: t.tcEmail,
+        }));
+  
+        const mergedUsers = [...formattedStudents, ...formattedTeachers];
+        setUsers(mergedUsers);
+        console.log("Merged Users:", mergedUsers);
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error);
       }
     };
     fetchData();
   }, []);
-
+  
   const showModal = (user = null) => {
     setEditingUser(user);
-    setForm(user || { name: "", role: "Student", email: "" });
+    setForm(user ? { ...user } : { name: "", role: "Student", email: "" });
     setIsModalOpen(true);
   };
-
+  
   const handleOk = () => {
-    if (!form.name || !form.email) {
+    if (!form.name.trim() || !form.email.trim()) {
       alert("Vui lòng nhập đầy đủ thông tin");
       return;
     }
+  
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      alert("Email không hợp lệ");
+      return;
+    }
+  
     if (editingUser) {
       setUsers(users.map((u) => (u.id === editingUser.id ? { ...form, id: u.id } : u)));
     } else {
-      setUsers([...users, { ...form, id: users.length + 1 }]);
+      const newId = users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1;
+      setUsers([...users, { ...form, id: newId }]);
     }
+  
     setIsModalOpen(false);
   };
+//   const handleOk = async () => {
+//   if (!form.name || !form.email) {
+//     alert("Vui lòng nhập đầy đủ thông tin");
+//     return;
+//   }
+
+//   try {
+//     if (editingUser) {
+//       const updatedUser = await updateUser(editingUser.id, form); // Cập nhật
+//       setUsers(users.map((u) => (u.id === editingUser.id ? updatedUser : u)));
+//     } else {
+//       const newUser = await createUser(form); // Thêm mới
+//       setUsers([...users, newUser]);
+//     }
+//     setIsModalOpen(false);
+//   } catch (error) {
+//     console.error("Lỗi khi lưu dữ liệu:", error);
+//   }
+// };
 
   return (
     <div className="p-6">

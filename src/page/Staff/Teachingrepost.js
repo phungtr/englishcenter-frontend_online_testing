@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import '../../page/teacher/TeachingScheduleReport.css';
+import '../../page/Staff/TeachingScheduleReport.css';
 import Schedule from '../../component/Calender'
-import Navbar from '../../component/pagebar';
+import Navbar from '../../component/Staffnavbar';
 // import { getTeachers } from '../../sevrice/Api';
 
 const TeachingScheduleReport = () => {

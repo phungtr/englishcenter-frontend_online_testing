@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './page/login';
-import TeachingScheduleReport from './page/teacher/Teachingrepost';
+import TeachingScheduleReport from './page/Staff/Teachingrepost';
 import UserManagement from './page/Staff/UserManagement';
 import Statistics from './page/Staff/Statistics';
 import AdminHome from './page/Dasboards/Adminhome';

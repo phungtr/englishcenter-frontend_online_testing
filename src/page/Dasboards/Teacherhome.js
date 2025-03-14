@@ -1,7 +1,7 @@
 import React from 'react';
 import "../../style/style/Home.css";
-import Navbar from '../../component/pagebar';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
+import TeacherNavbar from '../../component/Teachernavbar';
 
 const TeacherHome = () => {
   const data = [
@@ -20,7 +20,7 @@ const TeacherHome = () => {
   return (
     <div className="home-container">
       <div className="home-title">
-        <Navbar />
+        <TeacherNavbar/>
       </div>
       <div className="home-content">
         <div className="home-content-left">

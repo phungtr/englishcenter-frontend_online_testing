@@ -46,17 +46,30 @@ const Schedule = () => {
   const timeSlots = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00"];
   const pxPerMinute = 1;
 
-  const timeToPosition = (time) => {
+  const extractTime = (isoTime) => {
+    if (!isoTime) return ""; // Trả về chuỗi rỗng nếu isoTime không có giá trị
+    return isoTime.split("T")[1].substring(0, 5);
+  };
+  const timeToPosition = (time) => { 
     const [hour, minute] = time.split(":").map(Number);
     return ((hour - 7) * 60 + minute) * pxPerMinute;
   };
 
-  const getDayIndex = (dateString) => {
-    const [day, month, year] = dateString.split("/").map(Number);
-    const date = new Date(year, month - 1, day);
-    const dayOfWeek = date.getDay();
-    return dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Thứ Hai = 0, ..., Chủ Nhật = 6
-  };
+  const getDayIndex = (startTime) => {
+    if (!startTime) return -1;
+    
+    // Chuyển đổi startTime sang chuỗi theo giờ Việt Nam
+    const vietnamTimeString = new Date(startTime).toLocaleString("en-US", {
+timeZone: "Asia/Ho_Chi_Minh"
+    });
+    // Tạo lại đối tượng Date theo giờ Việt Nam
+    const localDate = new Date(vietnamTimeString);
+    
+    const dayOfWeek = localDate.getDay(); // getDay() trả về 0 (CN) đến 6 (Thứ Bảy)
+    return dayOfWeek === 0 ? 6 : dayOfWeek - 3; // Đưa về: Thứ Hai = 0, Thứ Ba = 1, ..., Chủ Nhật = 6
+};
+
+
 
   
   return (
@@ -86,30 +99,33 @@ const Schedule = () => {
 
           <div className="calendar">
           {schedule.map((schedule, index) => {
-              const top = timeToPosition(schedule?.startTime);
-              const height = timeToPosition(schedule?.endTime) - top;
-              const dayIndex = getDayIndex(schedule?.date);
-              const eventClass = `event ${schedule.className.toLowerCase().replace(/\s+/g, "-")}`;
-              return (
+            const startTimeValue = extractTime(schedule?.startTime);
+            const endTimeValue = extractTime(schedule?.endTime);
+            const top = timeToPosition(startTimeValue);
+            const height = timeToPosition(endTimeValue) - top;
+            const dayIndex = getDayIndex(schedule?.startTime);
+            const eventClass = `event ${schedule.className.toLowerCase().replace(/\s+/g, "-")}`;
+            console.log(dayIndex);
+            return (
                 <div
-                  key={index}
-                  className={eventClass}
-                  style={{
-                    gridColumnStart: dayIndex + 2,
-                    top: `${top}px`,
-                    height: `${height}px`,
-                    position: "absolute",
-                    left: `${dayIndex * 255}px`,
-                    width: "255px",
-                    borderRadius: "8px",
-                    fontWeight: "bold",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                  }}
+                    key={index}
+                    className={eventClass}
+                    style={{
+                        gridColumnStart: dayIndex + 2,
+                        top: `${top}px`,
+                        height: `${height}px`,
+                        position: "absolute",
+                        left: `${dayIndex * 255}px`,
+                        width: "255px",
+                        borderRadius: "8px",
+                        fontWeight: "bold",
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                    }}
                 >
                   <div className="event-content">
                     <div className="event-title" style={{ fontSize: "16px", fontWeight: "bold",textAlign :"center",margin:"20px 0 0 0"}}>{schedule.className}</div>
                     <div className="Des">
-                    <div className="event-time" style={{margin:"10px 0 0 0"}}>{schedule.startTime} - {schedule.endTime}</div>
+                    <div className="event-time" style={{margin:"10px 0 0 0"}}>{startTimeValue} - {endTimeValue}</div>
                     <div className="event-teacher">{schedule.teacherName}</div>
                     </div>
                   </div>
@@ -120,7 +136,7 @@ const Schedule = () => {
         </div>
       </div>
       <div className="button-container" >
-        <button onClick={exportToExcel} className="export-button">Xuất Excel</button>
+<button onClick={exportToExcel} className="export-button">Xuất Excel</button>
       </div>
     </div>
   );
