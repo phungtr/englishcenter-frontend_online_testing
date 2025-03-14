@@ -11,18 +11,36 @@ const UserManagement = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [studentData, teacherData] = await Promise.all([
+        const [studentData, teacherData] = await Promise.allSettled([
           getAllStudents(),
           getAllTeachers(),
         ]);
   
-        const formattedStudents = studentData.map((s) => ({
-          id: s.svId, name: s.svName, role: "STUDENT", email: s.svEmail,
-        }));
+        const formattedStudents =
+          studentData.status === "fulfilled"
+            ? studentData.value.map((s) => ({
+                id: s.svId,
+                name: s.svName,
+                role: "STUDENT",
+                email: s.svEmail || "N/A",
+                dob: s.svDob ? s.svDob.split("T")[0] : "N/A",
+                gender: s.svGender || "Unknown",
+                phone: s.svPhoneNumber || "N/A",
+              }))
+            : [];
   
-        const formattedTeachers = teacherData.map((t) => ({
-          id: t.tcId, name: t.tcName, role: "TEACHER", email: t.tcEmail,
-        }));
+        const formattedTeachers =
+          teacherData.status === "fulfilled"
+            ? teacherData.value.map((t) => ({
+                id: t.tcId,
+                name: t.tcName,
+                role: "TEACHER",
+                email: t.tcEmail || "N/A",
+                dob: t.tcDob || "N/A",
+                gender: t.tcGender || "Unknown",
+                phone: t.tcPhoneNumber || "N/A",
+              }))
+            : [];
   
         const mergedUsers = [...formattedStudents, ...formattedTeachers];
         setUsers(mergedUsers);
@@ -36,7 +54,7 @@ const UserManagement = () => {
   
   const showModal = (user = null) => {
     setEditingUser(user);
-    setForm(user ? { ...user } : { name: "", role: "Student", email: "" });
+    setForm(user ? { ...user } : { name: "", role: "STUDENT", email: "" });
     setIsModalOpen(true);
   };
   
@@ -121,8 +139,8 @@ const UserManagement = () => {
             <input className="w-full p-2 border rounded my-2" placeholder="Họ và Tên" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             <input className="w-full p-2 border rounded my-2" type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             <select className="w-full p-2 border rounded my-2" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-              <option value="Student">Sinh viên</option>
-              <option value="Teacher">Giáo viên</option>
+              <option value="STUDENT">Sinh viên</option>
+              <option value="TEACHER">Giáo viên</option>
             </select>
             <div className="flex justify-end space-x-2">
               <button className="px-4 py-2 bg-blue-500 text-white rounded" onClick={handleOk}>Lưu</button>
