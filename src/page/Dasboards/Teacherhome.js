@@ -19,9 +19,10 @@ const TeacherHome = () => {
 
   return (
     <div className="home-container">
-      <div className="home-title">
-        <TeacherNavbar/>
-      </div>
+    <TeacherNavbar/>
+      <div className="home-title" style={{display:"flex",justifyContent:"center",flexWrap:"wrap"}}>
+
+   
       <div className="home-content">
         <div className="home-content-left">
           <h2>Trang chủ Giáo viên</h2>
@@ -50,6 +51,7 @@ const TeacherHome = () => {
             </PieChart>
           </div>
         </div>
+      </div>
       </div>
 
       <footer className="footer-container">

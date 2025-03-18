@@ -22,9 +22,11 @@ const AdminHome = () => {
 
   return (
     <div className="home-container">
+      <Navbar />
+    <div className='Staff-homme' style={{display:'flex',justifyContent:'space-around',flexWrap:'wrap'}}>
     <div className='home-tilte'>
 
-      <Navbar />
+
       </div>
       <div className='home-content'>
       <div className='home-content-left'>
@@ -81,6 +83,7 @@ const AdminHome = () => {
             <Tooltip />
           </PieChart>
         </div>
+      </div>
       </div>
       </div>
 

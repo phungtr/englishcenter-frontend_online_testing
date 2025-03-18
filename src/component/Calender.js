@@ -24,15 +24,6 @@ const Schedule = () => {
 
     loadSchedule();
   }, []);
-  // const schedule = [
-  //   { day: "Tue", date: "25/02/2025", startTime: "07:55", endTime: "09:40", className: "Tiếng anh cấp tốc", teacherName: "Nguyễn Văn Dưỡng " },
-  //   { day: "Tue", date: "25/02/2025", startTime: "09:45", endTime: "12:25", className: "Luyện nghe và nói", teacherName: "Vũ Minh Đăng" },
-  //   { day: "Wed", date: "26/02/2025", startTime: "07:00", endTime: "09:40", className: "Tiếng anh chuyên nghành", teacherName: "Lê Anh Nuôi "},
-  //   { day: "Thu", date: "27/02/2025", startTime: "07:00", endTime: "09:40", className: "Tiếng anh trẻ em", teacherName: "Hà Xuân Bách" },
-  //   { day: "Thu", date: "27/02/2025", startTime: "09:45", endTime: "11:30", className: "Luyện nghe và nói", teacherName: "Vũ Minh Đăng" },
-  //   { day: "Fri", date: "28/02/2025", startTime: "07:00", endTime: "08:45", className: "Tiếng anh chuyên nghành",teacherName: "Lê Anh Nuôi" },
-  //   { day: "Fri", date: "28/02/2025", startTime: "08:50", endTime: "11:30", className: "Tiếng anh cấp tốc", teacherName: "Nguyễn Văn Dưỡng" }
-  // ];
 
   const exportToExcel = () => {
     const filteredSchedule = schedule.map(({ style, ...rest }) => rest);
@@ -69,9 +60,6 @@ timeZone: "Asia/Ho_Chi_Minh"
     return dayOfWeek === 0 ? 6 : dayOfWeek - 3; // Đưa về: Thứ Hai = 0, Thứ Ba = 1, ..., Chủ Nhật = 6
 };
 
-
-
-  
   return (
 <div className="schedule-fixed">
       <h2 className="schedule-title">Thời khóa biểu</h2>

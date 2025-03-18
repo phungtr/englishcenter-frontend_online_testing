@@ -2,31 +2,23 @@ import React, { useState, useEffect } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import "../../style/style/Statistics.css";
 import * as XLSX from "xlsx";
-
+import { getAllClasses } from "../../sevrice/Api";
 const Statistics = () => {
 
-  const [data, setData] = useState([]);
-
-
+  const [classes, setClasses] = useState([]);
 
   useEffect(() => {
-
-    const demoData = [
-      { id: 1, name: "Nguyen Van A", role: "Student", class: "10A1", status: "Đang học", score: 8.5 },
-      { id: 2, name: "Tran Thi B", role: "Teacher", class: "10A2", status: "Đang giảng dạy", score: null },
-      { id: 3, name: "Le Van C", role: "Student", class: "10A3", status: "Đã tốt nghiệp", score: 9.0 },
-      { id: 4, name: "Pham Van D", role: "Student", class: "11A1", status: "Đang học", score: 8.5 },
-      { id: 5, name: "Hoang Thi E", role: "Student", class: "11A1", status: "Đang học", score: 7.8 },
-      { id: 6, name: "Nguyen Van F", role: "Teacher", class: "11A1", status: "Đang giảng dạy", score: null },
-      { id: 7, name: "Tran Van G", role: "Student", class: "12A3", status: "Đang học", score: 8.2 },
-      { id: 8, name: "Le Thi H", role: "Student", class: "12A2", status: "Đang học", score: 8.2 },
-      { id: 9, name: "Pham Thi I", role: "Student", class: "10A1", status: "Đang học", score: 9.1 },
-      { id: 10, name: "Bui Van J", role: "Teacher", class: "12A2", status: "Đang giảng dạy", score: null },
-    ];
-    setData(demoData);
-
+    const fetchClasses = async () => {
+      try {
+        const data = await getAllClasses();
+        setClasses(data); // Giả sử bạn có state để lưu danh sách lớp
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách lớp:", error);
+      }
+    };
+  
+    fetchClasses();
   }, []);
-
 
   const [search, setSearch] = useState("");
   const [filterClass, setFilterClass] = useState("");
@@ -40,7 +32,7 @@ const Statistics = () => {
     XLSX.writeFile(workbook, "Statistics_Report.xlsx");
   };
 
-  const filteredData = data
+  const filteredData = classes
   .filter((item) => item.role !== "Staff") // Loại bỏ nhân viên
   .filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
   .filter((item) => (filterClass ? item.class === filterClass : true))
@@ -48,31 +40,27 @@ const Statistics = () => {
   .filter((item) => item.role !== "Teacher");
 
 
-
-
-
   const activeClasses = new Set();
-  data.forEach((item) => {
+  classes.forEach((item) => {
     if (
-      (item.role === "Student" && item.status === "Đang học" && item.class !== "-") ||
-      (item.role === "Teacher" && item.status === "Đang giảng dạy" && item.class !== "-")
+      (item.role === "STUDENT" && item.status === "Đang học" && item.class !== "-") ||
+      (item.role === "TEACHER" && item.status === "Đang giảng dạy" && item.class !== "-")
     ) {
       activeClasses.add(item.class);
     }
   });
 
-
-  const totalStudents = data.filter((item) => item.role === "Student").length;
-  const completedStudents = data.filter(
-    (item) => item.role === "Student" && item.status === "Đã tốt nghiệp"
+  const totalStudents = classes.filter((item) => item.role === "STUDENT").length;
+  const completedStudents = classes.filter(
+    (item) => item.role === "STUDENT" && item.status === "Đã tốt nghiệp"
   ).length;
   const averageCompletionRate = totalStudents > 0
     ? ((completedStudents / totalStudents) * 100).toFixed(2)
     : 0;
 
 
-    const roleCounts = data.reduce((acc, item) => {
-      if (item.role !== "Staff") { // Đảm bảo Staff không xuất hiện trong biểu đồ
+    const roleCounts = classes.reduce((acc, item) => {
+      if (item.role !== "STAFF") { // Đảm bảo Staff không xuất hiện trong biểu đồ
         acc[item.role] = (acc[item.role] || 0) + 1;
       }
       return acc;
@@ -82,9 +70,9 @@ const Statistics = () => {
     
 
   // Đếm số lượng lớp học
-  const classCounts = { Class: new Set(data.map(item => item.class).filter(c => c && c !== "-")).size };
-  const uniqueClasses = [...new Set(data.map(item => item.class).filter(c => c && c !== "-"))];
-  const uniqueTeachers = [...new Set(data.filter(item => item.role === "Teacher").map(item => item.name))];
+  const classCounts = { Class: new Set(classes.map(item => item.class).filter(c => c && c !== "-")).size };
+  const uniqueClasses = [...new Set(classes.map(item => item.class).filter(c => c && c !== "-"))];
+  const uniqueTeachers = [...new Set(classes.filter(item => item.role === "Teacher").map(item => item.name))];
   
   const chartData = [
     ...Object.keys(roleCounts).map(role => ({ category: role, count: roleCounts[role] })),

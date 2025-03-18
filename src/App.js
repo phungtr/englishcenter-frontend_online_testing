@@ -4,7 +4,7 @@ import LoginPage from './page/login';
 import TeachingScheduleReport from './page/Staff/Teachingrepost';
 import UserManagement from './page/Staff/UserManagement';
 import Statistics from './page/Staff/Statistics';
-import AdminHome from './page/Dasboards/Adminhome';
+import StaffHome from './page/Dasboards/Staffhome';
 import TeacherHome from './page/Dasboards/Teacherhome';
 import StudentHome from './page/Dasboards/Studenthome';
 
@@ -23,7 +23,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/Admin-home" element={<AdminHome/>} />
+        <Route path="/Staff-home" element={<StaffHome/>} />
         <Route path="/Teacher-home" element={<TeacherHome />} />
         <Route path="/Student-home" element={<StudentHome/>} />
         <Route path="/teaching-schedule-report" element={<TeachingScheduleReport />} />

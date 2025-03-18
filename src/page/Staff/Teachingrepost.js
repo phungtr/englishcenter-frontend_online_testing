@@ -1,43 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import '../../page/Staff/TeachingScheduleReport.css';
+import '../../style/style/TeachingScheduleReport.css';
 import Schedule from '../../component/Calender'
 import Navbar from '../../component/Staffnavbar';
-// import { getTeachers } from '../../sevrice/Api';
+import { schedules } from '../../sevrice/Api';
 
 const TeachingScheduleReport = () => {
-  const [teacher, setTeacher] = useState([]);
+  const [schedule, setSchedule] = useState([]);
   const [filteredTeachers, setFilteredTeacher] = useState([]);
   const [filters, setFilters] = useState({ lecturer: '', course: '', date: '' });
 
 
-  // useEffect(() => {
-  //   const loadTeachers = async () => {
-  //     try {
-
-  //       const data = await getTeachers({});
-  //       setTeacher(data);
-
-  //       if (data.token) {
-  //         localStorage.setItem('token', data.token);
-  //       }
-  //     } catch (error) {
-  //       console.error("Không thể tải thời khóa biểu:", error);
-  //     }
-  //   };
-
-  //   loadTeachers();
-  // }, []);
   useEffect(() => {
-    // Fake data for demo
-    const demoData = [
-      { id: 1, lecturer: 'Nguyễn Văn Dưỡng', course: 'Tiếng anh cấp tốc', dateTime: '2025-02-25 07:55' },
-      { id: 2, lecturer: 'Hà Xuân Bách', course: 'Tiếng anh trẻ em', dateTime: '2025-02-24 07:00' },
-      { id: 3, lecturer: 'Vũ Minh Đăng', course: 'Luyện nghe và nói', dateTime: '2025-02-25 09:45' },
-      { id: 4, lecturer: 'Lê Anh Nuôi', course: 'Tiếng anh chuyên ngành', dateTime: '2025-02-26 07:00' },
-      { id: 5, lecturer: 'Đoàn Nguyễn Thành Hưng', course: 'Ngữ pháp nâng cao', dateTime: '2025-02-24 09:45' }
-    ];
-    setTeacher(demoData);
-    setFilteredTeacher(demoData);
+    const loadSchedule = async () => {
+      try {
+        // Gọi API, truyền đối tượng rỗng nếu không cần tham số
+        const data = await schedules({});
+        setSchedule(data);
+        console.log(data);
+        // Nếu dữ liệu trả về có token, bạn có thể lưu vào localStorage:
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+      } catch (error) {
+        console.error("Không thể tải thời khóa biểu:", error);
+      }
+    };
+
+    loadSchedule();
   }, []);
 
   const handleFilterChange = (e) => {
@@ -50,11 +39,10 @@ const TeachingScheduleReport = () => {
   };
 
   const applyFilters = (currentFilters) => {
-    let filtered = teacher.filter(teacher => {
+    let filtered = schedule.filter(teacher => {
       return (
-        (currentFilters.lecturer ? teacher.lecturer.toLowerCase().includes(currentFilters.lecturer.toLowerCase()) : true) &&
-        (currentFilters.course ? teacher.course.toLowerCase().includes(currentFilters.course.toLowerCase()) : true) &&
-        (currentFilters.date ? teacher.dateTime.startsWith(currentFilters.date) : true)
+        (currentFilters.teacherName ? teacher.teacherName.toLowerCase().includes(currentFilters.teacherName.toLowerCase()) : true) &&
+        (currentFilters.className ? teacher.className.toLowerCase().includes(currentFilters.className.toLowerCase()) : true)
       );
     });
     setFilteredTeacher(filtered);
@@ -63,23 +51,23 @@ const TeachingScheduleReport = () => {
   return (
     <div className="schedule-container">
       <div style={{ alignItems: "center", display: "flex" }}>  <Navbar /></div>
-      <h1 className="schedule-title">Báo cáo lịch giảng dạy - {new Date().toLocaleDateString()}</h1>
+      <h1 className="schedule-title" >Báo cáo lịch giáo viên</h1>
       <div className="filter-container">
-        <input type="text" name="lecturer" placeholder="Lọc theo giảng viên" value={filters.lecturer} onChange={handleFilterChange} />
-        <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.course} onChange={handleFilterChange} />
+        <input type="text" name="lecturer" placeholder="Lọc theo giảng viên" value={filters.teacherName} onChange={handleFilterChange} />
+        <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.className} onChange={handleFilterChange} />
         <input type="date" name="date" value={filters.date} onChange={handleFilterChange} />
       </div>
       <div className="schedule-grid">
         {filteredTeachers.map((teacher) => (
-          <div key={teacher.id} className="schedule-item">
-            <div className="course-title">{teacher.course}</div>
+          <div key={teacher.tcId} className="schedule-item">
+            <div className="course-title">{teacher.className}</div>
             <div className="course-info">
-              <p>Giảng viên: {teacher.lecturer}</p>
-              <p>Thời gian: {teacher.dateTime}</p>
+              <p>Giảng viên: {teacher.teacherName}</p>
             </div>
           </div>
         ))}
       </div>
+      {/* Phai truyen props sang de loc */}
       <Schedule />
       {/* Footer */}
       <footer className="footer-container">

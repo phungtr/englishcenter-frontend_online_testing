@@ -76,11 +76,12 @@
   font-size: 12px;
   
 }
+.button-container{
+  position:relative;
+  padding-left:1550px
+}
 
   .export-button {
-    position: absolute;
-    bottom: -100px;
-    right: 50px;
     padding: 10px 20px;
     background-color: #4f99e1;
     color: white;

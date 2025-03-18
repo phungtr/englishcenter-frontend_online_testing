@@ -20,12 +20,11 @@ const StudentHome = () => {
 
   return (
     <div className="home-container">
-      <div className="home-title">
-        <StudentNavbar/>
-      </div>
+    <StudentNavbar/>
+      <div className="home-title" style={{display:"flex",flexDirection:"row",flexWrap:"wrap",justifyContent:"center"}}>
       <div className="home-content">
         <div className="home-content-left">
-          <h2>Trang chủ Học viên</h2>
+          <h2>Trang chủ học viên</h2>
         </div>
         <div className="home-content-right">
           <p>Hệ thống giúp học viên theo dõi lịch học, tiến độ khóa học và kết quả học tập.</p>
@@ -51,6 +50,7 @@ const StudentHome = () => {
             </PieChart>
           </div>
         </div>
+      </div>
       </div>
 
       <footer className="footer-container">

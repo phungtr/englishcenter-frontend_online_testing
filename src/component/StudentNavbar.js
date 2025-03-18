@@ -18,7 +18,7 @@ const StudentNavbar = () => {
         <li><Link to="/student-schedule">Thời khóa biểu</Link></li>
         <li><Link to="/student-courses">Khóa học của tôi</Link></li>
         <li><Link to="/student-grades">Điểm số</Link></li>
-        <li><Link to="/student-support">Hỗ trợ</Link></li>
+        <li><Link to="/student-support">Phản hồi</Link></li>
         <li>
           <button style={{ background: "#256dbb" }} onClick={handleLogout} className="logout-button">
             Đăng xuất

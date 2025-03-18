@@ -1,7 +1,6 @@
 .home-container {
   display: flex;
   justify-content: center;
-  align-items: center;
   background-color: wheat;
   background-image: url('../acess/english-backhrod.webp');
   background-repeat: no-repeat;
@@ -36,7 +35,7 @@
   margin-top: auto;
   flex-wrap: nowrap;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   position: relative;
   opacity: 0.95;
 }
