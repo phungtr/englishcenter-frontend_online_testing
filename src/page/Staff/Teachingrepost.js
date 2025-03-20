@@ -42,8 +42,8 @@ const TeachingScheduleReport = () => {
     });
     setFilteredTeacher(filtered);
   };
-  const filteredSchedule = Array.isArray(TeachingScheduleReport) 
-  ? TeachingScheduleReport.map(report => ({
+  const filteredSchedule = Array.isArray(schedule) 
+  ? schedule.map(report => ({
       classId: report.classId,
       className: report.className,
       tcId: report.tcId,
