@@ -1,64 +1,11 @@
 /* eslint-disable react/prop-types */
-import React, {useState} from "react";
+import React from "react";
 import "../style/style/Calender.css";
 import * as XLSX from "xlsx";
-import { createSchedule } from "../sevrice/Api";
+
 
 const Schedule = ({ schedule })  => {
-  const [error, setError] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    className: "",
-    teacherName: "",
-    date: "",
-    startTime: "",
-    endTime: "",
-    scheduleStatus: "ACTIVE",
-  });
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setForm((prevForm) => {
-        const updatedForm = { ...prevForm, [name]: value };
-    
-        // Kiểm tra nếu startTime hoặc endTime thay đổi
-        if (updatedForm.date && updatedForm.startTime && updatedForm.endTime) {
-          const startDateTime = new Date(`${updatedForm.date}T${updatedForm.startTime}:00`);
-          const endDateTime = new Date(`${updatedForm.date}T${updatedForm.endTime}:00`);
-    
-          if (startDateTime >= endDateTime) {
-            setError("Thời gian bắt đầu phải sớm hơn thời gian kết thúc!");
-          } else {
-            setError("");
-          }
-        }
-    
-        return updatedForm;
-      });
-    };
-  
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        const { date, startTime, endTime, ...rest } = form;
-    
-        // Gộp ngày với giờ
-        const startDateTime = new Date(`${date}T${startTime}:00.000Z`).toISOString();
-        const endDateTime = new Date(`${date}T${endTime}:00.000Z`).toISOString();
-    
-        const newSchedule = await createSchedule({
-          ...rest,
-          startTime: startDateTime,
-          endTime: endDateTime,
-        });
-    
-        console.log("Thời khóa biểu đã tạo:", newSchedule);
-        setShowForm(false);
-        alert("Tạo thời khóa biểu thành công!");
-      } catch (error) {
-        alert("Lỗi khi tạo thời khóa biểu!");
-      }
-    };
-    
+
   const exportToExcel = () => {
     const filteredSchedule = schedule.map(({ style, ...rest }) => rest);
     const ws = XLSX.utils.json_to_sheet(filteredSchedule);
@@ -83,40 +30,21 @@ const Schedule = ({ schedule })  => {
   const getDayIndex = (startTime) => {
     if (!startTime) return -1;
     
-    const localDate = new Date(startTime);
-    localDate.setHours(localDate.getHours() + 7); // Chuyển sang giờ Việt Nam
+    // Chuyển đổi startTime sang chuỗi theo giờ Việt Nam
+    const vietnamTimeString = new Date(startTime).toLocaleString("en-US", {
+timeZone: "Asia/Ho_Chi_Minh"
+    });
+    // Tạo lại đối tượng Date theo giờ Việt Nam
+    const localDate = new Date(vietnamTimeString);
     
-    const dayOfWeek = localDate.getDay();
-    return dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const dayOfWeek = localDate.getDay(); // getDay() trả về 0 (CN) đến 6 (Thứ Bảy)
+    return dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Đưa về: Thứ Hai = 0, Thứ Ba = 1, ..., Chủ Nhật = 6
 };
+
   return (
 <div className="schedule-fixed">
       <h2 className="schedule-title">Thời khóa biểu</h2>
-      <div className="container">
-      <div className="container-open-form">
-      <button onClick={() => setShowForm(true)} className="open-form-button">
-        Tạo thời khóa biểu
-      </button>
-      </div>
 
-      {showForm && (
-        <div className="form-overlay">
-          <div className="form-container">
-            <h2>Thêm thời khóa biểu</h2>
-            <form onSubmit={handleSubmit}>
-              <input type="date" name="date" value={form.date} onChange={handleChange} required className="input-field" />
-              <input type="time" name="startTime" value={form.startTime} onChange={handleChange} required className="input-field" />
-              <input type="time" name="endTime" value={form.endTime} onChange={handleChange} required className="input-field" />
-              <input name="className" placeholder="Lớp" value={form.className} onChange={handleChange} required className="input-field" />
-              <input name="teacherName" placeholder="Tên giáo viên" value={form.teacherName} onChange={handleChange} required className="input-field" />
-              {error && <p className="error-message">{error}</p>}
-              <button type="submit" className="submit-button">Xác nhận</button>
-              <button type="button" onClick={() => setShowForm(false)} className="cancel-button">Hủy</button>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
       <div className="Schedule-container">
       <div className="time-cell-row">
         <div className="time-cell">GMT+7</div>

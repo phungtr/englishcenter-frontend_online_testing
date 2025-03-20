@@ -112,6 +112,7 @@
 .container {
   text-align: center;
   margin-top: 20px;
+  z-index:1000
 
 }
 .container-open-form{

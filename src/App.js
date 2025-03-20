@@ -7,7 +7,7 @@ import Statistics from './page/Staff/Statistics';
 import StaffHome from './page/Dasboards/Staffhome';
 import TeacherHome from './page/Dasboards/Teacherhome';
 import StudentHome from './page/Dasboards/Studenthome';
-
+import TeachingSchedule from './page/teacher/teachingschedule'
 // import ReportStatistics from './page/Dasboard';
 function App() {
   // const navigate = useNavigate();
@@ -29,6 +29,7 @@ function App() {
         <Route path="/teaching-schedule-report" element={<TeachingScheduleReport />} />
         <Route path='/user-management' element={<UserManagement/>}/>
         <Route path='/statistics' element={<Statistics/>}/>
+        <Route path='teacher-schedule' element={<TeachingSchedule/>}/>
         {/* <Route path='/Dasboard' element= {<ReportStatistics/>}/> */}
       </Routes>
     </Router>

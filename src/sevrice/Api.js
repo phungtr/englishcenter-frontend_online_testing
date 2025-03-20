@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://26.253.189.203:8080/api'; // Thay đổi URL nếu cần
+const API_BASE_URL = 'http://localhost:8083/api'; // Thay đổi URL nếu cần
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -37,7 +37,7 @@ export const schedules = async (schedule) => {
 };
 export const createSchedule = async (scheduleData) => {
   try {
-    const response = await api.post("/schedules/create", scheduleData);
+    const response = await api.post("/schedule/create", scheduleData);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi tạo thời khóa biểu:", error);

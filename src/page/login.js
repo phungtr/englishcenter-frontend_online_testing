@@ -22,6 +22,7 @@ const LoginPage = () => {
 
       localStorage.setItem('token', data.token);
       localStorage.setItem('role', data.role);
+      localStorage.setItem('aUid', data.aUid); // Lưu aUid vào localStorage
       alert(`Đăng nhập thành công! Vai trò: ${data.role}`);
 
       if (data.role === 'ADMIN') navigate('/Admin-home');

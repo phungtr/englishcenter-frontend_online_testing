@@ -2,13 +2,68 @@ import React, { useState, useEffect } from 'react';
 import '../../style/style/TeachingScheduleReport.css';
 import Schedule from '../../component/Calender';
 import Navbar from '../../component/Staffnavbar';
-import { schedules} from '../../sevrice/Api';
+import { schedules,createSchedule} from '../../sevrice/Api';
 
 const TeachingScheduleReport = () => {
   const [schedule, setSchedule] = useState([]);
   const [filteredTeachers, setFilteredTeacher] = useState([]);
   const [filters, setFilters] = useState({ lecturer: '', course: '', date: '' });
+  const [error, setError] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  
 
+
+    const [form, setForm] = useState({
+      className: "",
+      teacherName: "",
+      date: "",
+      startTime: "",
+      endTime: "",
+      scheduleStatus: "ACTIVE",
+    });
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prevForm) => {
+          const updatedForm = { ...prevForm, [name]: value };
+      
+          // Kiểm tra nếu startTime hoặc endTime thay đổi
+          if (updatedForm.date && updatedForm.startTime && updatedForm.endTime) {
+            const startDateTime = new Date(`${updatedForm.date}T${updatedForm.startTime}:00`);
+            const endDateTime = new Date(`${updatedForm.date}T${updatedForm.endTime}:00`);
+      
+            if (startDateTime >= endDateTime) {
+              setError("Thời gian bắt đầu phải sớm hơn thời gian kết thúc!");
+            } else {
+              setError("");
+            }
+          }
+      
+          return updatedForm;
+        });
+      };
+    
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+          const { date, startTime, endTime, ...rest } = form;
+      
+          // Gộp ngày với giờ
+          const startDateTime = new Date(`${date}T${startTime}:00.000Z`).toISOString();
+          const endDateTime = new Date(`${date}T${endTime}:00.000Z`).toISOString();
+      
+          const newSchedule = await createSchedule({
+            ...rest,
+            startTime: startDateTime,
+            endTime: endDateTime,
+          });
+      
+          console.log("Thời khóa biểu đã tạo:", newSchedule);
+          setShowForm(false);
+          alert("Tạo thời khóa biểu thành công!");
+        } catch (error) {
+          alert("Lỗi khi tạo thời khóa biểu!");
+        }
+      };
 
   useEffect(() => {
     const loadSchedule = async () => {
@@ -57,7 +112,32 @@ const TeachingScheduleReport = () => {
   return (
     <div className="schedule-container">
       <div style={{ alignItems: "center", display: "flex" }}>  <Navbar /></div>
-      <h1 className="schedule-title" >Báo cáo lịch giáo viên</h1>
+
+      <div className="container">
+      <div className="container-open-form">
+      <button onClick={() => setShowForm(true)} className="open-form-button">
+        Tạo thời khóa biểu
+      </button>
+      </div>
+
+      {showForm && (
+        <div className="form-overlay">
+          <div className="form-container">
+            <h2>Thêm thời khóa biểu</h2>
+            <form onSubmit={handleSubmit}>
+              <input type="date" name="date" value={form.date} onChange={handleChange} required className="input-field" />
+              <input type="time" name="startTime" value={form.startTime} onChange={handleChange} required className="input-field" />
+              <input type="time" name="endTime" value={form.endTime} onChange={handleChange} required className="input-field" />
+              <input name="className" placeholder="Mã lớp" value={form.className} onChange={handleChange} required className="input-field" />
+              <input name="teacherName" placeholder="Mã giáo viên" value={form.teacherName} onChange={handleChange} required className="input-field" />
+              {error && <p className="error-message">{error}</p>}
+              <button type="submit" className="submit-button">Xác nhận</button>
+              <button type="button" onClick={() => setShowForm(false)} className="cancel-button">Hủy</button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
       <div className="filter-container">
         <input type="text" name="lecturer" placeholder="Lọc theo giảng viên" value={filters.teacherName} onChange={handleFilterChange} />
         <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.className} onChange={handleFilterChange} />
