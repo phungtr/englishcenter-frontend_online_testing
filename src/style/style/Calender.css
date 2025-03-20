@@ -6,6 +6,7 @@
 .schedule-fixed {
   background-color: #fff;
   border-radius: 15px;
+  margin:0 5%
 }
 
 .time-cell-row {
@@ -46,7 +47,7 @@
   width: 100px;
   text-align: center;
   padding: 10px 5px;
-  height:40px
+  height:100px
 }
 .calendar{
   position:relative;
@@ -78,7 +79,7 @@
 }
 .button-container{
   position:relative;
-  padding-left:1550px
+  padding-left:1520px
 }
 
   .export-button {
@@ -105,3 +106,83 @@
 .event.luyện-nghe-và-nói { background: #ffeeaa; }
 .event.tiếng-anh-chuyên-nghành { background: #e5ddff; }
 .empty { background: #f9f9f9; }
+
+
+
+.container {
+  text-align: center;
+  margin-top: 20px;
+
+}
+.container-open-form{
+  position:relative;
+  padding-left:1500px
+}
+.open-form-button {
+  padding: 10px 20px;
+  background-color: green;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 7px 9px 7px 7px rgba(0, 0, 0, 0.2);
+}
+
+.open-form-button:hover {
+  background-color: darkgreen;
+}
+
+/* Overlay mờ khi mở form */
+.form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form hiển thị */
+.form-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+}
+
+.input-field {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  background-color: blue;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.cancel-button {
+  width: 100%;
+  padding: 10px;
+  background-color: gray;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 5px;
+}

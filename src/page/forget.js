@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react/jsx-no-comment-textnodes */
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import '../style/style/login.css'; 
 
 const ForgotPassword = ({ onBack }) => {
@@ -22,8 +23,9 @@ const ForgotPassword = ({ onBack }) => {
         <h2>Forgot Password</h2>
         {message && <p className="message">{message}</p>}
         <div className="form-group">
-          <label>Email:</label>
+          <label htmlFor="email">Email:</label>
           <input
+            id="email"
             type="email"
             value={resetEmail}
             onChange={(e) => setResetEmail(e.target.value)}
@@ -38,4 +40,8 @@ const ForgotPassword = ({ onBack }) => {
   );
 };
 
-export default ForgotPassword
+ForgotPassword.propTypes = {
+  onBack: PropTypes.func.isRequired,
+};
+
+export default ForgotPassword;

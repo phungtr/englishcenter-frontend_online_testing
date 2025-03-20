@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/style/TeachingScheduleReport.css';
-import Schedule from '../../component/Calender'
+import Schedule from '../../component/Calender';
 import Navbar from '../../component/Staffnavbar';
-import { schedules } from '../../sevrice/Api';
+import { schedules} from '../../sevrice/Api';
 
 const TeachingScheduleReport = () => {
   const [schedule, setSchedule] = useState([]);
@@ -13,14 +13,9 @@ const TeachingScheduleReport = () => {
   useEffect(() => {
     const loadSchedule = async () => {
       try {
-        // Gọi API, truyền đối tượng rỗng nếu không cần tham số
         const data = await schedules({});
-        setSchedule(data);
-        console.log(data);
-        // Nếu dữ liệu trả về có token, bạn có thể lưu vào localStorage:
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-        }
+        const formattedData = Array.isArray(data) ? data : [data]; // Đảm bảo dữ liệu là mảng
+        setSchedule(formattedData);
       } catch (error) {
         console.error("Không thể tải thời khóa biểu:", error);
       }
@@ -39,14 +34,25 @@ const TeachingScheduleReport = () => {
   };
 
   const applyFilters = (currentFilters) => {
-    let filtered = schedule.filter(teacher => {
+    let filtered = schedule.filter(schedule => {
       return (
-        (currentFilters.teacherName ? teacher.teacherName.toLowerCase().includes(currentFilters.teacherName.toLowerCase()) : true) &&
-        (currentFilters.className ? teacher.className.toLowerCase().includes(currentFilters.className.toLowerCase()) : true)
+        (currentFilters.teacherName ? schedule.teacherName.toLowerCase().includes(currentFilters.teacherName.toLowerCase()) : true) &&
+        (currentFilters.className ? schedule.className.toLowerCase().includes(currentFilters.className.toLowerCase()) : true)
       );
     });
     setFilteredTeacher(filtered);
   };
+  const filteredSchedule = Array.isArray(TeachingScheduleReport) 
+  ? TeachingScheduleReport.map(report => ({
+      classId: report.classId,
+      className: report.className,
+      tcId: report.tcId,
+      teacherName: report.teacherName,
+      startTime: report.startTime,
+      endTime: report.endTime,
+      scheduleStatus: report.scheduleStatus
+    })).filter(schedule => schedule.scheduleStatus === 1)
+  : [];
 
   return (
     <div className="schedule-container">
@@ -58,17 +64,17 @@ const TeachingScheduleReport = () => {
         <input type="date" name="date" value={filters.date} onChange={handleFilterChange} />
       </div>
       <div className="schedule-grid">
-        {filteredTeachers.map((teacher) => (
-          <div key={teacher.tcId} className="schedule-item">
-            <div className="course-title">{teacher.className}</div>
+        {filteredTeachers.map((schedule) => (
+          <div key={schedule.tcId} className="schedule-item">
+            <div className="course-title">{schedule.className}</div>
             <div className="course-info">
-              <p>Giảng viên: {teacher.teacherName}</p>
+              <p>Giảng viên: {schedule.teacherName}</p>
             </div>
           </div>
         ))}
       </div>
       {/* Phai truyen props sang de loc */}
-      <Schedule />
+      <Schedule schedule={filteredSchedule} />
       {/* Footer */}
       <footer className="footer-container">
         <div className="footer-section">

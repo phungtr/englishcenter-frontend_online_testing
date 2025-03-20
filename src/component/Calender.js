@@ -1,30 +1,64 @@
-import React, {useEffect,useState} from "react";
+/* eslint-disable react/prop-types */
+import React, {useState} from "react";
 import "../style/style/Calender.css";
 import * as XLSX from "xlsx";
-import { schedules } from "../sevrice/Api";
-const Schedule = () => {
-  const [schedule, setSchedule] = useState([]);
-  console.log(schedule,"schedule");
+import { createSchedule } from "../sevrice/Api";
 
-  useEffect(() => {
-    const loadSchedule = async () => {
-      try {
-        // Gọi API, truyền đối tượng rỗng nếu không cần tham số
-        const data = await schedules({});
-        setSchedule(data);
-        console.log(data);
-        // Nếu dữ liệu trả về có token, bạn có thể lưu vào localStorage:
-        if (data.token) {
-          localStorage.setItem('token', data.token);
+const Schedule = ({ schedule })  => {
+  const [error, setError] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    classId: "",
+    tcId: "",
+    date: "",
+    startTime: "",
+    endTime: "",
+    scheduleStatus: "ACTIVE",
+  });
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setForm((prevForm) => {
+        const updatedForm = { ...prevForm, [name]: value };
+    
+        // Kiểm tra nếu startTime hoặc endTime thay đổi
+        if (updatedForm.date && updatedForm.startTime && updatedForm.endTime) {
+          const startDateTime = new Date(`${updatedForm.date}T${updatedForm.startTime}:00`);
+          const endDateTime = new Date(`${updatedForm.date}T${updatedForm.endTime}:00`);
+    
+          if (startDateTime >= endDateTime) {
+            setError("Thời gian bắt đầu phải sớm hơn thời gian kết thúc!");
+          } else {
+            setError("");
+          }
         }
+    
+        return updatedForm;
+      });
+    };
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const { date, startTime, endTime, ...rest } = form;
+    
+        // Gộp ngày với giờ
+        const startDateTime = new Date(`${date}T${startTime}:00.000Z`).toISOString();
+        const endDateTime = new Date(`${date}T${endTime}:00.000Z`).toISOString();
+    
+        const newSchedule = await createSchedule({
+          ...rest,
+          startTime: startDateTime,
+          endTime: endDateTime,
+        });
+    
+        console.log("Thời khóa biểu đã tạo:", newSchedule);
+        setShowForm(false);
+        alert("Tạo thời khóa biểu thành công!");
       } catch (error) {
-        console.error("Không thể tải thời khóa biểu:", error);
+        alert("Lỗi khi tạo thời khóa biểu!");
       }
     };
-
-    loadSchedule();
-  }, []);
-
+    
   const exportToExcel = () => {
     const filteredSchedule = schedule.map(({ style, ...rest }) => rest);
     const ws = XLSX.utils.json_to_sheet(filteredSchedule);
@@ -35,7 +69,7 @@ const Schedule = () => {
 
   const days = [ "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy","Chủ Nhật"];
   const timeSlots = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00"];
-  const pxPerMinute = 1;
+  const pxPerMinute = 2;
 
   const extractTime = (isoTime) => {
     if (!isoTime) return ""; // Trả về chuỗi rỗng nếu isoTime không có giá trị
@@ -57,12 +91,37 @@ timeZone: "Asia/Ho_Chi_Minh"
     const localDate = new Date(vietnamTimeString);
     
     const dayOfWeek = localDate.getDay(); // getDay() trả về 0 (CN) đến 6 (Thứ Bảy)
-    return dayOfWeek === 0 ? 6 : dayOfWeek - 3; // Đưa về: Thứ Hai = 0, Thứ Ba = 1, ..., Chủ Nhật = 6
+    return dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Đưa về: Thứ Hai = 0, Thứ Ba = 1, ..., Chủ Nhật = 6
 };
 
   return (
 <div className="schedule-fixed">
       <h2 className="schedule-title">Thời khóa biểu</h2>
+      <div className="container">
+      <div className="container-open-form">
+      <button onClick={() => setShowForm(true)} className="open-form-button">
+        Tạo thời khóa biểu
+      </button>
+      </div>
+
+      {showForm && (
+        <div className="form-overlay">
+          <div className="form-container">
+            <h2>Thêm thời khóa biểu</h2>
+            <form onSubmit={handleSubmit}>
+              <input type="date" name="date" value={form.date} onChange={handleChange} required className="input-field" />
+              <input type="time" name="startTime" value={form.startTime} onChange={handleChange} required className="input-field" />
+              <input type="time" name="endTime" value={form.endTime} onChange={handleChange} required className="input-field" />
+              <input name="classId" placeholder="Mã lớp" value={form.classId} onChange={handleChange} required className="input-field" />
+              <input name="tcId" placeholder="Mã giáo viên" value={form.tcId} onChange={handleChange} required className="input-field" />
+              {error && <p className="error-message">{error}</p>}
+              <button type="submit" className="submit-button">Xác nhận</button>
+              <button type="button" onClick={() => setShowForm(false)} className="cancel-button">Hủy</button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
       <div className="Schedule-container">
       <div className="time-cell-row">
         <div className="time-cell">GMT+7</div>

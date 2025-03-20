@@ -35,7 +35,15 @@ export const schedules = async (schedule) => {
     throw error;
   }
 };
-
+export const createSchedule = async (scheduleData) => {
+  try {
+    const response = await api.post("/schedules/create", scheduleData);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi tạo thời khóa biểu:", error);
+    throw error;
+  }
+};
 export const addStudentToClass = async (studentData) => {
   try {
     const response = await api.post('/learning-progress/addStudent', studentData);
