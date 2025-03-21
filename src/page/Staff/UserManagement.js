@@ -9,12 +9,32 @@ const UserManagement = () => {
   const [form, setForm] = useState({ name: "", role: "STUDENT", email: "" });
   const [showForm, setShowForm] = useState(false);
 
-    const toggleForm = () => {
-      setShowForm(!showForm);
-      setEditingUser(null);
-      setForm({ name: "", role: "STUDENT", email: "" });
-    };
-
+  const toggleForm = () => {
+    setShowForm(!showForm);
+    setEditingUser(null);
+    setForm({
+      name: "",
+      email: "",
+      role: "STUDENT",
+      dob: "",
+      phone: "",
+      gender: "Unknown",
+      image: "image_url",
+      address: "",
+      fbUrl: "",
+    });
+  };
+  
+  const handleRoleChange = (e) => {
+    const newRole = e.target.value;
+    setForm((prevForm) => ({
+      ...prevForm,
+      role: newRole,
+      ...(newRole === "STUDENT"
+        ? { address: "", fbUrl: "http://facebook.com/default" }
+        : { dob: "", phone: "", gender: "Unknown" }),
+    }));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,9 +107,6 @@ const handleOk = async () => {
 };
 const createUser = async (userData) => {
   try {
-    const creatorId = localStorage.getItem("aUid") || "admin";
-    const updatorId = localStorage.getItem("aUid") || "admin";
-
     if (userData.role === "TEACHER") {
       const teacherData = {
         tcName: userData.name,
@@ -100,8 +117,8 @@ const createUser = async (userData) => {
         tcGender: userData.gender || "Unknown",
         tcImage: userData.image || "image_url",
         tcRole: "Teacher",
-        creatorId: creatorId,
-        updatorId: updatorId,
+        creatorId: "admin",
+        updatorId: "admin",
         tcStatus: 1,
         jsonData: "{}"
       };
@@ -118,8 +135,8 @@ const createUser = async (userData) => {
         svAddress: userData.address || "N/A",
         svFbUrl: userData.fbUrl || "http://facebook.com/default",
         svRole: "Student",
-        creatorId: creatorId,
-        updatorId: updatorId,
+        creatorId: "admin",
+        updatorId: "admin",
         svStatus: 1,
         jsonData: "{}"
       };
@@ -132,6 +149,7 @@ const createUser = async (userData) => {
     throw error;
   }
 };
+
 
 const updateUser = async (userId, userData) => {
   try {
@@ -181,27 +199,48 @@ const updateUser = async (userId, userData) => {
         </table>
       </div>
 
-            {showForm && (
-            <div className="modal-overlay">
-              <div className="modal-container">
-                <h2>{editingUser ? "Chỉnh sửa người dùng" : "Thêm người dùng"}</h2>
-                <input placeholder="Họ và Tên" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                <input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-                <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-                  <option value="STUDENT">Sinh viên</option>
-                  <option value="TEACHER">Giáo viên</option>
-                </select>
-                <div className="button-group">
-                  <button className="save-btn" onClick={handleOk}>Lưu</button>
-                  <button className="cancel-btn" onClick={toggleForm}>Hủy</button>
-                </div>
+      {showForm && (
+          <div className="modal-overlay">
+            <div className="modal-container">
+              <h2>{editingUser ? "Chỉnh sửa người dùng" : "Thêm người dùng"}</h2>
+              <input placeholder="Họ và Tên" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              <input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+              <select value={form.role} onChange={handleRoleChange}>
+                <option value="STUDENT">Sinh viên</option>
+                <option value="TEACHER">Giáo viên</option>
+              </select>
+
+              {/* Nếu là sinh viên, hiển thị trường địa chỉ và Facebook */}
+              {form.role === "STUDENT" && (
+                <>
+                  <input placeholder="Địa chỉ" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+                  <input placeholder="Facebook URL" value={form.fbUrl} onChange={(e) => setForm({ ...form, fbUrl: e.target.value })} />
+                </>
+              )}
+
+              {/* Nếu là giáo viên, hiển thị ngày sinh, số điện thoại, giới tính */}
+              {form.role === "TEACHER" && (
+                <>
+                  <input type="date" value={form.dob} onChange={(e) => setForm({ ...form, dob: e.target.value })} />
+                  <input placeholder="Số điện thoại" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                  <select value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
+                    <option value="Male">Nam</option>
+                    <option value="Female">Nữ</option>
+                    <option value="Unknown">Không xác định</option>
+                  </select>
+                </>
+              )}
+
+              <div className="button-group">
+                <button className="save-btn" onClick={handleOk}>Lưu</button>
+                <button className="cancel-btn" onClick={toggleForm}>Hủy</button>
               </div>
             </div>
-          )}
-          <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={toggleForm}>
-            {showForm ? "Đóng form" : "Thêm người dùng"}
-          </button>
-
+          </div>
+        )}
+        <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={toggleForm}>
+          {showForm ? "Đóng form" : "Thêm người dùng"}
+        </button>
       </div>
       <footer className="footer-container">
       <div className="footer-section">
