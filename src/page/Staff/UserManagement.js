@@ -6,7 +6,16 @@ import "../../style/style/UserManagement.css"
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
-  const [form, setForm] = useState({ name: "", role: "STUDENT", email: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    role: "STUDENT",
+    dob: "",
+    phoneNumber: "",
+    gender: "Male",
+    address: "",  // Chỉ dành cho STUDENT
+    fbUrl: "http://facebook.com/default",  // Chỉ dành cho STUDENT
+  });
   const [showForm, setShowForm] = useState(false);
 
   const toggleForm = () => {
@@ -17,11 +26,10 @@ const UserManagement = () => {
       email: "",
       role: "STUDENT",
       dob: "",
-      phone: "",
-      gender: "Unknown",
-      image: "image_url",
-      address: "",
-      fbUrl: "",
+      phoneNumber: "",
+      gender: "Male",
+      address: "",  // Chỉ dành cho STUDENT
+      fbUrl: "http://facebook.com/default",  // Chỉ dành cho STUDENT
     });
   };
   
@@ -32,10 +40,10 @@ const UserManagement = () => {
       role: newRole,
       ...(newRole === "STUDENT"
         ? { address: "", fbUrl: "http://facebook.com/default" }
-        : { dob: "", phone: "", gender: "Unknown" }),
+        : { address: undefined, fbUrl: undefined }),
     }));
   };
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -199,48 +207,43 @@ const updateUser = async (userId, userData) => {
         </table>
       </div>
 
+
       {showForm && (
-          <div className="modal-overlay">
-            <div className="modal-container">
-              <h2>{editingUser ? "Chỉnh sửa người dùng" : "Thêm người dùng"}</h2>
-              <input placeholder="Họ và Tên" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-              <input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-              <select value={form.role} onChange={handleRoleChange}>
-                <option value="STUDENT">Sinh viên</option>
-                <option value="TEACHER">Giáo viên</option>
-              </select>
+            <div className="modal-overlay">
+              <div className="modal-container">
+                <h2>{editingUser ? "Chỉnh sửa người dùng" : "Thêm người dùng"}</h2>
+                <input placeholder="Họ và Tên" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                <input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                <select value={form.role} onChange={handleRoleChange}>
+                  <option value="STUDENT">Sinh viên</option>
+                  <option value="TEACHER">Giáo viên</option>
+                </select>
 
-              {/* Nếu là sinh viên, hiển thị trường địa chỉ và Facebook */}
-              {form.role === "STUDENT" && (
-                <>
-                  <input placeholder="Địa chỉ" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
-                  <input placeholder="Facebook URL" value={form.fbUrl} onChange={(e) => setForm({ ...form, fbUrl: e.target.value })} />
-                </>
-              )}
+                <input type="date" placeholder="Ngày sinh" value={form.dob} onChange={(e) => setForm({ ...form, dob: e.target.value })} />
+                <input placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} />
+                <select value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
+                  <option value="Male">Nam</option>
+                  <option value="Female">Nữ</option>
+                </select>
 
-              {/* Nếu là giáo viên, hiển thị ngày sinh, số điện thoại, giới tính */}
-              {form.role === "TEACHER" && (
-                <>
-                  <input type="date" value={form.dob} onChange={(e) => setForm({ ...form, dob: e.target.value })} />
-                  <input placeholder="Số điện thoại" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-                  <select value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
-                    <option value="Male">Nam</option>
-                    <option value="Female">Nữ</option>
-                    <option value="Unknown">Không xác định</option>
-                  </select>
-                </>
-              )}
+                {form.role === "STUDENT" && (
+                  <>
+                    <input placeholder="Địa chỉ" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+                    <input placeholder="Facebook URL" value={form.fbUrl} onChange={(e) => setForm({ ...form, fbUrl: e.target.value })} />
+                  </>
+                )}
 
-              <div className="button-group">
-                <button className="save-btn" onClick={handleOk}>Lưu</button>
-                <button className="cancel-btn" onClick={toggleForm}>Hủy</button>
+                <div className="button-group">
+                  <button className="save-btn" onClick={handleOk}>Lưu</button>
+                  <button className="cancel-btn" onClick={toggleForm}>Hủy</button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={toggleForm}>
-          {showForm ? "Đóng form" : "Thêm người dùng"}
-        </button>
+          )}
+
+          <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={toggleForm}>
+            {showForm ? "Đóng form" : "Thêm người dùng"}
+          </button>
       </div>
       <footer className="footer-container">
       <div className="footer-section">
