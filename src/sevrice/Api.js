@@ -15,7 +15,15 @@ export const login = async (username, password) => {
     throw error;
   }
 };
-
+export const getAllAccounts = async () => {
+  try {
+    const response = await api.get('/account/getAll');
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách tài khoản:', error);
+    throw error;
+  }
+};
 export const getAllClasses = async () => {
   try {
     const response = await api.get('/classes/all');

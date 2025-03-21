@@ -115,13 +115,23 @@ const handleOk = async () => {
 };
 const createUser = async (userData) => {
   try {
+    // Lấy username từ localStorage
+    const username = localStorage.getItem('username');
+
+    // Lấy danh sách tài khoản
+    const accounts = await getAllAccounts();
+    
+    // Tìm aId theo username
+    const account = accounts.find(acc => acc.aUid === username);
+    const aId = account ? account.aId : "";
+
     if (userData.role === "TEACHER") {
       const teacherData = {
         tcName: userData.name,
-        aId: userData.aId || "",
+        aId: aId, // Gán aId lấy từ danh sách accounts
         tcEmail: userData.email,
         tcDob: userData.dob || "",
-        tcPhoneNumber: userData.phone || "",
+        tcPhoneNumber: userData.phoneNumber || "",
         tcGender: userData.gender || "Unknown",
         tcImage: userData.image || "image_url",
         tcRole: "Teacher",
@@ -134,10 +144,10 @@ const createUser = async (userData) => {
     } else if (userData.role === "STUDENT") {
       const studentData = {
         svName: userData.name,
-        aId: userData.aId || "",
+        aId: aId, // Gán aId lấy từ danh sách accounts
         svEmail: userData.email,
         svDob: userData.dob || "",
-        svPhoneNumber: userData.phone || "",
+        svPhoneNumber: userData.phoneNumber || "",
         svGender: userData.gender || "Unknown",
         svImage: userData.image || "image_url",
         svAddress: userData.address || "N/A",
@@ -157,7 +167,6 @@ const createUser = async (userData) => {
     throw error;
   }
 };
-
 
 const updateUser = async (userId, userData) => {
   try {
