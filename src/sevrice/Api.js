@@ -75,18 +75,18 @@ export const getAllStaff = async () => {
   }
 };
 
-export const getAllStudents = async () => {
+export const getAllStudents = async (student) => {
   try {
-    const response = await api.get('/students/all');
+    const response = await api.get('/students/all', { params: student });
     return response.data;
   } catch (error) {
     console.error('Lỗi khi lấy danh sách sinh viên:', error);
     throw error;
   }
 };
-export const getAllTeachers = async () => {
+export const getAllTeachers = async (teacher) => {
   try {
-    const response = await api.get('/teachers/all');
+    const response = await api.get('/teachers/all', { params: teacher });
     return response.data;
   } catch (error) {
     console.error('Lỗi khi lấy danh sách giáo viên:', error);

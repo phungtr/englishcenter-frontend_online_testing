@@ -119,6 +119,16 @@ const TeachingScheduleReport = () => {
   return (
     <div className="schedule-container">
       <div style={{ alignItems: "center", display: "flex" }}>  <Navbar /></div>
+      <div className="schedule-grid">
+        {filteredTeachers.map((schedule) => (
+          <div key={schedule.tcId} className="schedule-item">
+            <div className="course-title">{schedule.className}</div>
+            <div className="course-info">
+              <p>Giảng viên: {schedule.teacherName}</p>
+            </div>
+          </div>
+        ))}
+      </div>
       <div className='schedule-middle'>
       <div className='right-container'>
       <div className="container">
@@ -152,16 +162,7 @@ const TeachingScheduleReport = () => {
         <input type="date" name="date" value={filters.date} onChange={handleFilterChange} />
       </div>
       </div>
-      <div className="schedule-grid">
-        {filteredTeachers.map((schedule) => (
-          <div key={schedule.tcId} className="schedule-item">
-            <div className="course-title">{schedule.className}</div>
-            <div className="course-info">
-              <p>Giảng viên: {schedule.teacherName}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+
       {/* Phai truyen props sang de loc */}
       <Schedule schedule={filteredSchedule} />
       </div>
