@@ -11,7 +11,6 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate();
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -19,23 +18,27 @@ const LoginPage = () => {
       if (!data.token || !data.role) {
         throw new Error("Dữ liệu đăng nhập không hợp lệ!");
       }
-
+  
+      // Lưu thông tin chỉ khi đăng nhập thành công
       localStorage.setItem('token', data.token);
       localStorage.setItem('role', data.role);
-      localStorage.setItem('aUid', data.aUid); // Lưu aUid vào localStorage
+      localStorage.setItem('username', username); // Chỉ lưu username ở đây
+  
       alert(`Đăng nhập thành công! Vai trò: ${data.role}`);
-
+  
+      // Điều hướng đến trang phù hợp
       if (data.role === 'ADMIN') navigate('/Admin-home');
       else if (data.role === 'STAFF') navigate('/Staff-home');
       else if (data.role === 'TEACHER') navigate('/Teacher-home');
       else if (data.role === 'STUDENT') navigate('/Student-home');
       else throw new Error("Vai trò không hợp lệ!");
-
+  
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
       setError("Email hoặc mật khẩu không chính xác!");
     }
   };
+  
 
   return (
     <div className="login-page">

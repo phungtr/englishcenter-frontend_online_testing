@@ -17,29 +17,57 @@ const TimeTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const aUid = localStorage.getItem('aUid');
-        if (!aUid) {
-          console.error('Không tìm thấy aUid trong localStorage!');
+        const username = localStorage.getItem('username');  
+        if (!username) {
+          console.error('Không tìm thấy username trong localStorage!');
           return;
         }
   
+        // Lấy danh sách sinh viên
         const students = await getAllStudents();
-        const loggedStudent = students.find(s => s.account?.aUid === aUid);
+        console.log('students:', students);
+        if (!students || students.length === 0) {
+          console.error('Không thể tải danh sách sinh viên!');
+          return;
+        }
   
-        if (!loggedStudent) return;
+        // Tìm sinh viên khớp với username
+        const loggedStudent = students.find(s => s.account?.aUid === username);
+        console.log('loggedStudent:', loggedStudent);
+        if (!loggedStudent) {
+          console.error('Không tìm thấy sinh viên với username:', username);
+          return;
+        }
+  
+        console.log('loggedStudent:', loggedStudent);
         setStudentId(loggedStudent.svId);
   
+        // Lấy danh sách lớp
         const classData = await getAllClasses();
-        const studentClasses = classData.filter(cls => cls.students.some(s => s.svId === loggedStudent.svId));
+        if (!classData) {
+          console.error('Không thể tải danh sách lớp!');
+          return;
+        }
+  
+        const studentClasses = classData.filter(cls => 
+          cls.students?.some(s => s.svId === loggedStudent.svId)
+        );
         setStudentClasses(studentClasses);
   
+        // Lấy danh sách lịch học
         const scheduleData = await schedules({});
+        if (!scheduleData) {
+          console.error('Không thể tải lịch học!');
+          return;
+        }
+  
         const studentSchedule = scheduleData.filter(item =>
           studentClasses.some(cls => cls.classId === item.classId) && item.scheduleStatus === 1
         );
   
         setSchedule(studentSchedule);
         setFilteredSchedule(studentSchedule);
+  
       } catch (error) {
         console.error('Lỗi khi tải dữ liệu:', error);
       }
@@ -47,6 +75,7 @@ const TimeTable = () => {
   
     fetchData();
   }, []);
+  
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/style/TeachingScheduleReport.css';
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 import Schedule from '../../component/Calender';
 import Navbar from '../../component/Staffnavbar';
 import { schedules,createSchedule} from '../../sevrice/Api';
@@ -12,7 +10,6 @@ const TeachingScheduleReport = () => {
   const [filters, setFilters] = useState({ lecturer: '', course: '', date: '' });
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [showCalendar, setShowCalendar] = useState(false);
 
   
     const [form, setForm] = useState({
@@ -119,14 +116,20 @@ const TeachingScheduleReport = () => {
     })).filter(schedule => schedule.scheduleStatus === 1)
   : [];
 
-  const handleDateChange = (date) => {
-    setFilters((prev) => ({ ...prev, date: date.toISOString().split("T")[0] }));
-    setShowCalendar(true); // Ẩn lịch sau khi chọn ngày
-  };
 
   return (
     <div className="schedule-container">
       <div style={{ alignItems: "center", display: "flex" }}>  <Navbar /></div>
+      <div className="schedule-grid">
+        {filteredTeachers.map((schedule) => (
+          <div key={schedule.tcId} className="schedule-item">
+            <div className="course-title">{schedule.className}</div>
+            <div className="course-info">
+              <p>Giảng viên: {schedule.teacherName}</p>
+            </div>
+          </div>
+        ))}
+      </div>
       <div className='schedule-middle'>
       <div className='right-container'>
       <div className="container">
@@ -155,26 +158,12 @@ const TeachingScheduleReport = () => {
         )}
       </div>
       <div className="filter-container">
-      <div className='calender-filter'>
         <input type="text" name="lecturer" placeholder="Lọc theo giảng viên" value={filters.teacherName} onChange={handleFilterChange} />
         <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.className} onChange={handleFilterChange} />
-        </div>
-        <div className="calendar-wrapper">
-          <input type="text" name="date" value={filters.date} readOnly onClick={() => setShowCalendar(!showCalendar)} />
-          {showCalendar && <Calendar onChange={handleDateChange} value={filters.date ? new Date(filters.date) : new Date()} />}
-        </div>
+        <input type="date" name="date" value={filters.date} onChange={handleFilterChange} />
       </div>
       </div>
-      <div className="schedule-grid">
-        {filteredTeachers.map((schedule) => (
-          <div key={schedule.tcId} className="schedule-item">
-            <div className="course-title">{schedule.className}</div>
-            <div className="course-info">
-              <p>Giảng viên: {schedule.teacherName}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+
       {/* Phai truyen props sang de loc */}
       <Schedule schedule={filteredSchedule} />
       </div>
