@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/style/TeachingScheduleReport.css';
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import Schedule from '../../component/Calender';
 import Navbar from '../../component/Staffnavbar';
 import { schedules,createSchedule} from '../../sevrice/Api';
@@ -10,12 +12,12 @@ const TeachingScheduleReport = () => {
   const [filters, setFilters] = useState({ lecturer: '', course: '', date: '' });
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+
   
-
-
     const [form, setForm] = useState({
-      className: "",
-      teacherName: "",
+      classId: "",
+      tcId: "",
       date: "",
       startTime: "",
       endTime: "",
@@ -46,15 +48,23 @@ const TeachingScheduleReport = () => {
         e.preventDefault();
         try {
           const { date, startTime, endTime, ...rest } = form;
-      
+          const creatorId = localStorage.getItem("aUid");
+          
+          if (!creatorId) {
+            alert("Lỗi: Không tìm thấy thông tin người tạo!");
+            return;
+          }
           // Gộp ngày với giờ
           const startDateTime = new Date(`${date}T${startTime}:00.000Z`).toISOString();
           const endDateTime = new Date(`${date}T${endTime}:00.000Z`).toISOString();
       
           const newSchedule = await createSchedule({
-            ...rest,
+     
+            creatorId,
             startTime: startDateTime,
             endTime: endDateTime,
+            jsonData: JSON.stringify({ key: "value" }),
+            ...rest,
           });
       
           console.log("Thời khóa biểu đã tạo:", newSchedule);
@@ -109,10 +119,16 @@ const TeachingScheduleReport = () => {
     })).filter(schedule => schedule.scheduleStatus === 1)
   : [];
 
+  const handleDateChange = (date) => {
+    setFilters((prev) => ({ ...prev, date: date.toISOString().split("T")[0] }));
+    setShowCalendar(true); // Ẩn lịch sau khi chọn ngày
+  };
+
   return (
     <div className="schedule-container">
       <div style={{ alignItems: "center", display: "flex" }}>  <Navbar /></div>
-
+      <div className='schedule-middle'>
+      <div className='right-container'>
       <div className="container">
       <div className="container-open-form">
       <button onClick={() => setShowForm(true)} className="open-form-button">
@@ -120,28 +136,34 @@ const TeachingScheduleReport = () => {
       </button>
       </div>
 
-      {showForm && (
-        <div className="form-overlay">
-          <div className="form-container">
-            <h2>Thêm thời khóa biểu</h2>
-            <form onSubmit={handleSubmit}>
-              <input type="date" name="date" value={form.date} onChange={handleChange} required className="input-field" />
-              <input type="time" name="startTime" value={form.startTime} onChange={handleChange} required className="input-field" />
-              <input type="time" name="endTime" value={form.endTime} onChange={handleChange} required className="input-field" />
-              <input name="className" placeholder="Mã lớp" value={form.className} onChange={handleChange} required className="input-field" />
-              <input name="teacherName" placeholder="Mã giáo viên" value={form.teacherName} onChange={handleChange} required className="input-field" />
-              {error && <p className="error-message">{error}</p>}
-              <button type="submit" className="submit-button">Xác nhận</button>
-              <button type="button" onClick={() => setShowForm(false)} className="cancel-button">Hủy</button>
-            </form>
+        {showForm && (
+          <div className="form-overlay">
+            <div className="form-container">
+              <h2>Thêm thời khóa biểu</h2>
+              <form onSubmit={handleSubmit}>
+                <input type="date" name="date" value={form.date} onChange={handleChange} required className="input-field" />
+                <input type="time" name="startTime" value={form.startTime} onChange={handleChange} required className="input-field" />
+                <input type="time" name="endTime" value={form.endTime} onChange={handleChange} required className="input-field" />
+                <input name="classId" placeholder="Mã lớp" value={form.classId} onChange={handleChange} required className="input-field" />
+                <input name="tcId" placeholder="Mã giáo viên" value={form.tcId} onChange={handleChange} required className="input-field" />
+                {error && <p className="error-message">{error}</p>}
+                <button type="submit" className="submit-button">Xác nhận</button>
+                <button type="button" onClick={() => setShowForm(false)} className="cancel-button">Hủy</button>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
       <div className="filter-container">
+      <div className='calender-filter'>
         <input type="text" name="lecturer" placeholder="Lọc theo giảng viên" value={filters.teacherName} onChange={handleFilterChange} />
         <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.className} onChange={handleFilterChange} />
-        <input type="date" name="date" value={filters.date} onChange={handleFilterChange} />
+        </div>
+        <div className="calendar-wrapper">
+          <input type="text" name="date" value={filters.date} readOnly onClick={() => setShowCalendar(!showCalendar)} />
+          {showCalendar && <Calendar onChange={handleDateChange} value={filters.date ? new Date(filters.date) : new Date()} />}
+        </div>
+      </div>
       </div>
       <div className="schedule-grid">
         {filteredTeachers.map((schedule) => (
@@ -155,6 +177,7 @@ const TeachingScheduleReport = () => {
       </div>
       {/* Phai truyen props sang de loc */}
       <Schedule schedule={filteredSchedule} />
+      </div>
       {/* Footer */}
       <footer className="footer-container">
         <div className="footer-section">

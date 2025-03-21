@@ -38,7 +38,7 @@
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 200px;
+  width: 120px;
   font-size: 14px;
 }
 
@@ -102,4 +102,23 @@
 
 .submit-button:hover {
   background-color: #0056b3;
+}
+.schedule-middle{
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  align-content: space-around;
+
+}
+.right-container{
+  background: #fff;
+  margin: 5% 1%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 460px;
+  height: 400px;
+  padding: 10px;
+
 }

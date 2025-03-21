@@ -67,6 +67,8 @@ const TeachingSchedule = () => {
   return (
     <div className="schedule-container">
       <TeacherNavbar />
+      <div className='schedule-middle'>
+      <div className='right-container'>
       <div className="filter-container">
         <select name="className" value={filters.className} onChange={handleFilterChange}>
           <option value="">Tất cả lớp</option>
@@ -76,7 +78,9 @@ const TeachingSchedule = () => {
         </select>
         <input type="date" name="date" value={filters.date} onChange={handleFilterChange} />
       </div>
+      </div>
       <Schedule schedule={filteredSchedule} />
+      </div>
       <footer className="footer-container">
       <div className="footer-section">
         <h3>Quản lý trung tâm tiếng Anh</h3>

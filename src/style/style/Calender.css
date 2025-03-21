@@ -6,7 +6,9 @@
 .schedule-fixed {
   background-color: #fff;
   border-radius: 15px;
-  margin:0 5%
+  margin: 5% 0 5% 2%;
+  width: 1420px;
+  padding:20px;
 }
 
 .time-cell-row {
@@ -79,7 +81,7 @@
 }
 .button-container{
   position:relative;
-  padding-left:1520px
+  padding-left:1000px
 }
 
   .export-button {
@@ -117,7 +119,6 @@
 }
 .container-open-form{
   position:relative;
-  padding-left:1500px
 }
 .open-form-button {
   padding: 10px 20px;
