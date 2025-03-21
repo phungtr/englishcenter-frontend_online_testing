@@ -5,9 +5,15 @@ import Navbar from "../../component/Staffnavbar";
 import "../../style/style/UserManagement.css"
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [form, setForm] = useState({ name: "", role: "STUDENT", email: "" });
+  const [showForm, setShowForm] = useState(false);
+
+    const toggleForm = () => {
+      setShowForm(!showForm);
+      setEditingUser(null);
+      setForm({ name: "", role: "STUDENT", email: "" });
+    };
 
 
   useEffect(() => {
@@ -57,30 +63,9 @@ const UserManagement = () => {
   const showModal = (user = null) => {
     setEditingUser(user);
     setForm(user ? { ...user } : { name: "", role: "STUDENT", email: "" });
-    setIsModalOpen(true);
+    setShowForm(true);
   };
   
-  // const handleOk = () => {
-  //   if (!form.name.trim() || !form.email.trim()) {
-  //     alert("Vui lòng nhập đầy đủ thông tin");
-  //     return;
-  //   }
-  
-  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //   if (!emailRegex.test(form.email)) {
-  //     alert("Email không hợp lệ");
-  //     return;
-  //   }
-  
-  //   if (editingUser) {
-  //     setUsers(users.map((u) => (u.id === editingUser.id ? { ...form, id: u.id } : u)));
-  //   } else {
-  //     const newId = users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1;
-  //     setUsers([...users, { ...form, id: newId }]);
-  //   }
-  
-  //   setIsModalOpen(false);
-  // };
 const handleOk = async () => {
   if (!form.name || !form.email) {
     alert("Vui lòng nhập đầy đủ thông tin");
@@ -95,17 +80,52 @@ const handleOk = async () => {
       const newUser = await createUser(form); // Thêm mới
       setUsers([...users, newUser]);
     }
-    setIsModalOpen(false);
+    setShowForm(false);
   } catch (error) {
     console.error("Lỗi khi lưu dữ liệu:", error);
   }
 };
 const createUser = async (userData) => {
   try {
+    const creatorId = localStorage.getItem("aUid") || "admin";
+    const updatorId = localStorage.getItem("aUid") || "admin";
+
     if (userData.role === "TEACHER") {
-      return await createTeacher(userData);
+      const teacherData = {
+        tcName: userData.name,
+        aId: userData.aId || "",
+        tcEmail: userData.email,
+        tcDob: userData.dob || "",
+        tcPhoneNumber: userData.phone || "",
+        tcGender: userData.gender || "Unknown",
+        tcImage: userData.image || "image_url",
+        tcRole: "Teacher",
+        creatorId: creatorId,
+        updatorId: updatorId,
+        tcStatus: 1,
+        jsonData: "{}"
+      };
+      return await createTeacher(teacherData);
+    } else if (userData.role === "STUDENT") {
+      const studentData = {
+        svName: userData.name,
+        aId: userData.aId || "",
+        svEmail: userData.email,
+        svDob: userData.dob || "",
+        svPhoneNumber: userData.phone || "",
+        svGender: userData.gender || "Unknown",
+        svImage: userData.image || "image_url",
+        svAddress: userData.address || "N/A",
+        svFbUrl: userData.fbUrl || "http://facebook.com/default",
+        svRole: "Student",
+        creatorId: creatorId,
+        updatorId: updatorId,
+        svStatus: 1,
+        jsonData: "{}"
+      };
+      return await createStudent(studentData);
     } else {
-      return await createStudent(userData);
+      throw new Error("Vai trò không hợp lệ");
     }
   } catch (error) {
     console.error("Lỗi khi tạo người dùng:", error);
@@ -161,26 +181,27 @@ const updateUser = async (userId, userData) => {
         </table>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-            <h2 className="text-lg font-bold">{editingUser ? "Chỉnh sửa người dùng" : "Thêm người dùng"}</h2>
-            <input className="w-full p-2 border rounded my-2" placeholder="Họ và Tên" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <input className="w-full p-2 border rounded my-2" type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-            <select className="w-full p-2 border rounded my-2" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-              <option value="STUDENT">Sinh viên</option>
-              <option value="TEACHER">Giáo viên</option>
-            </select>
-            <div className="flex justify-end space-x-2">
-              <button className="px-4 py-2 bg-blue-500 text-white rounded" onClick={handleOk}>Lưu</button>
-              <button className="px-4 py-2 bg-gray-300 rounded" onClick={() => setIsModalOpen(false)}>Hủy</button>
+            {showForm && (
+            <div className="modal-overlay">
+              <div className="modal-container">
+                <h2>{editingUser ? "Chỉnh sửa người dùng" : "Thêm người dùng"}</h2>
+                <input placeholder="Họ và Tên" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                <input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+                  <option value="STUDENT">Sinh viên</option>
+                  <option value="TEACHER">Giáo viên</option>
+                </select>
+                <div className="button-group">
+                  <button className="save-btn" onClick={handleOk}>Lưu</button>
+                  <button className="cancel-btn" onClick={toggleForm}>Hủy</button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
-      <div className="button-user" style={{display : "flex",paddingLeft:"1500px"}}>
-      <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"  onClick={() => showModal()}>Thêm người dùng</button>
-      </div>
+          )}
+          <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={toggleForm}>
+            {showForm ? "Đóng form" : "Thêm người dùng"}
+          </button>
+
       </div>
       <footer className="footer-container">
       <div className="footer-section">
