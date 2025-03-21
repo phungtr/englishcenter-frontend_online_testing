@@ -115,15 +115,7 @@ const handleOk = async () => {
 };
 const createUser = async (userData) => {
   try {
-    // Lấy username từ localStorage
-    const username = localStorage.getItem('username');
-
-    // Lấy danh sách tài khoản
-    const accounts = await getAllAccounts();
-    
-    // Tìm aId theo username
-    const account = accounts.find(acc => acc.aUid === username);
-    const aId = account ? account.aId : "";
+    const aId = crypto.randomUUID();
 
     if (userData.role === "TEACHER") {
       const teacherData = {
