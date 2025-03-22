@@ -114,34 +114,43 @@ const handleOk = async () => {
     console.error("Lỗi khi lưu dữ liệu:", error);
   }
 };
+
+useEffect(() => {
+  if (form.name.trim() !== "") {
+    getAvailableAccount(form.role, form.name);
+  } else {
+    setSuggestedNames([]);
+  }
+}, [form.name, form.role]);
+
 const getAvailableAccount = async (role, name) => {
   try {
     const accounts = await getAllAccounts();
     const students = await getAllStudents();
     const teachers = await getAllTeachers();
 
-    // Lấy danh sách aId đã được sử dụng
     const usedAIds = new Set([
       ...students.map(student => student.account?.aId),
       ...teachers.map(teacher => teacher.account?.aId)
     ]);
 
-    // Xác định aType theo vai trò
     const requiredType = role === "STUDENT" ? 2 : 1;
 
-    // Tìm tài khoản phù hợp theo name (aUid) và chưa được sử dụng
-    const availableAccount = accounts.find(acc => 
-      acc.aType === requiredType && acc.aUid === name && !usedAIds.has(acc.aId)
+    // Tìm danh sách tài khoản phù hợp theo name (aUid) chưa được sử dụng
+    const availableAccounts = accounts.filter(acc => 
+      acc.aType === requiredType && 
+      acc.aUid.toLowerCase().includes(name.toLowerCase()) && 
+      !usedAIds.has(acc.aId)
     );
-    setSuggestedNames(availableAccount);
 
-    return availableAccount ? availableAccount.aId : null;
+    setSuggestedNames(availableAccounts.map(acc => acc.aUid)); // Cập nhật gợi ý
+
+    return availableAccounts.length > 0 ? availableAccounts[0].aId : null;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách tài khoản:", error);
     throw error;
   }
 };
-
 const createUser = async (userData) => {
   try {
     const aId = await getAvailableAccount(userData.role, userData.name);
@@ -247,7 +256,7 @@ const updateUser = async (userId, userData) => {
                 <input
                   placeholder="Họ và Tên"
                   value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })} 
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
                   list="nameSuggestions"
                 />
                 <datalist id="nameSuggestions">
@@ -255,7 +264,6 @@ const updateUser = async (userId, userData) => {
                     <option key={index} value={name} />
                   ))}
                 </datalist>
-
                 <input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                 <select value={form.role} onChange={handleRoleChange}>
                   <option value="STUDENT">Sinh viên</option>
