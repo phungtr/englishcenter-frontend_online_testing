@@ -6,6 +6,10 @@ import "../../style/style/UserManagement.css"
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+  const [suggestedNames, setSuggestedNames] = useState([]);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -16,8 +20,11 @@ const UserManagement = () => {
     address: "",  // Chỉ dành cho STUDENT
     fbUrl: "http://facebook.com/default",  // Chỉ dành cho STUDENT
   });
-  const [showForm, setShowForm] = useState(false);
-  const [suggestedNames, setSuggestedNames] = useState([]);
+  
+  const sortedUsers = [...users].sort((a, b) => (a.role === "TEACHER" ? -1 : 1));
+  const totalPages = Math.ceil(sortedUsers.length / itemsPerPage);
+  const paginatedUsers = sortedUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
 
   const toggleForm = () => {
     setShowForm(!showForm);
@@ -89,9 +96,18 @@ const UserManagement = () => {
     fetchData();
   }, []);
   
-  const showModal = (user = null) => {
+  const showModal = (user) => {
     setEditingUser(user);
-    setForm(user ? { ...user } : { name: "", role: "STUDENT", email: "" });
+    setForm({
+      name: user.name || "",
+      email: user.email || "",
+      dob: user.dob || "",
+      phoneNumber: user.phone || "",
+      gender: user.gender || "Male",
+      role: user.role, // Giữ cố định, không cho sửa
+      address: user.address || "",
+      fbUrl: user.fbUrl || "",
+    });
     setShowForm(true);
   };
   
@@ -202,11 +218,33 @@ const createUser = async (userData) => {
 
 const updateUser = async (userId, userData) => {
   try {
-    if (userData.role === "TEACHER") {
-      return await updateTeacher(userId, userData);
-    } else {
-      return await updateStudent(userId, userData);
-    }
+    const updatedData = userData.role === "TEACHER" ? {
+      tcName: userData.name,
+      tcEmail: userData.email,
+      tcDob: userData.dob,
+      tcPhoneNumber: userData.phone,
+      tcGender: userData.gender,
+      tcImage: userData.image || "image_url",
+      tcRole: "Teacher",
+      tcStatus: 1, // Đổi từ svStatus -> tcStatus
+      jsonData: "{}"
+    } : {
+      svName: userData.name,
+      svEmail: userData.email,
+      svDob: userData.dob,
+      svPhoneNumber: userData.phone,
+      svGender: userData.gender,
+      svImage: userData.image || "image_url",
+      svAddress: userData.address || "N/A",
+      svFbUrl: userData.fbUrl || "http://facebook.com/default",
+      svRole: "Student",
+      svStatus: 1,
+      jsonData: "{}"
+    };
+
+    return userData.role === "TEACHER"
+      ? await updateTeacher(userId, updatedData)
+      : await updateStudent(userId, updatedData);
   } catch (error) {
     console.error("Lỗi khi cập nhật người dùng:", error);
     throw error;
@@ -214,38 +252,58 @@ const updateUser = async (userId, userData) => {
 };
 
 
+
   return (
     <div className="p-6">
     <Navbar></Navbar>
-    <div  className="user-management" >
-      <div className="bg-white shadow-md rounded-lg p-4">
-        <div style={{}}>
-          <h2 className="User-title" style={{fontSize:"34px"}}>Quản lý người dùng</h2>
-        </div>
-        <table className="w-full border-collapse border border-gray-200">
-          <thead className="bg-gray-100">
+    <div className="user-management">
+      <div className="user-container">
+        <h2 className="user-title">Quản lý người dùng</h2>
+        <table className="user-table">
+          <thead>
             <tr>
-              <th className="border p-2">Họ và Tên</th>
-              <th className="border p-2">Vai trò</th>
-              <th className="border p-2">Email</th>
-              <th className="border p-2">Hành động</th>
+              <th>Họ và Tên</th>
+              <th>Vai trò</th>
+              <th>Email</th>
+              <th>Hành động</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user.id} className="border">
-                <td className="p-2">{user.name}</td>
-                <td className="p-2">{user.role}</td>
-                <td className="p-2">{user.email}</td>
-                <td className="p-2">
-                  <button className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600" onClick={() => showModal(user)}>
-                    Sửa
-                  </button>
+            {paginatedUsers.map((user) => (
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.role}</td>
+                <td>{user.email}</td>
+                <td>
+                  <button className="edit-button" onClick={() => showModal(user)}>Sửa</button>
                 </td>
               </tr>
             ))}
+
           </tbody>
-        </table>
+          </table>
+          {totalPages > 1 && (
+              <div className="pagination-container">
+                <button
+                  className="pagination-button"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                  &#60;
+                </button>
+                <span className="pagination-text">Trang {currentPage} / {totalPages}</span>
+                <button
+                  className="pagination-button"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  &#62;
+                </button>
+              </div>
+            )}
+          <button className="export" onClick={toggleForm}>
+            {showForm ? "Đóng form" : "Thêm người dùng"}
+          </button>
       </div>
 
 
@@ -292,9 +350,6 @@ const updateUser = async (userId, userData) => {
             </div>
           )}
 
-          <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={toggleForm}>
-            {showForm ? "Đóng form" : "Thêm người dùng"}
-          </button>
       </div>
       <footer className="footer-container">
       <div className="footer-section">

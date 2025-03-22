@@ -152,7 +152,7 @@ const Statistics = () => {
       </div>
 
       {/* Nút xuất Excel */}
-      <button onClick={exportToExcel}>Xuất Excel</button>
+      <button  className="export"onClick={exportToExcel}>Xuất Excel</button>
     </div>
   );
 };
