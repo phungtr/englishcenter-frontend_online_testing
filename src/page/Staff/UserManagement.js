@@ -102,7 +102,7 @@ const UserManagement = () => {
       name: user.name || "",
       email: user.email || "",
       dob: user.dob || "",
-      phoneNumber: user.phone || "",
+      phoneNumber: user.phoneNumber || "", // Đảm bảo tên khớp
       gender: user.gender || "Male",
       role: user.role, // Giữ cố định, không cho sửa
       address: user.address || "",
@@ -112,11 +112,13 @@ const UserManagement = () => {
   };
   
 const handleOk = async () => {
+  saveUser(form).then(() => {
+    window.location.reload(); // Reload lại trang sau khi hoàn tất
+  });
   if (!form.name || !form.email) {
     alert("Vui lòng nhập đầy đủ thông tin");
     return;
   }
-
   try {
     if (editingUser) {
       const updatedUser = await updateUser(editingUser.id, form); // Cập nhật
@@ -323,7 +325,7 @@ const updateUser = async (userId, userData) => {
                   ))}
                 </datalist>
                 <input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-                <select value={form.role} onChange={handleRoleChange}>
+                <select value={form.role} onChange={handleRoleChange} disabled={!!editingUser}>
                   <option value="STUDENT">Sinh viên</option>
                   <option value="TEACHER">Giáo viên</option>
                 </select>
