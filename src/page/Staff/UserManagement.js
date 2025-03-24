@@ -16,9 +16,11 @@ const UserManagement = () => {
   const totalPages = Math.ceil(sortedUsers.length / itemsPerPage);
   const paginatedUsers = sortedUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    role: "USER", // Hoặc ADMIN tùy vào quyền hạn
+    aUid: "",
+    aPwd: "",
+    aType: 1,
+    aStatus: 1,
+    jsonData: "{}"
   });
   const [form, setForm] = useState({
     name: "",
@@ -56,7 +58,11 @@ const UserManagement = () => {
     }));
   };
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: name === "aType" ? parseInt(value) : value, // Chuyển `aType` thành số
+    }));
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -75,7 +81,9 @@ const UserManagement = () => {
               email: s.svEmail || "N/A",
               dob: s.svDob ? s.svDob.split("T")[0] : "N/A", // Chuẩn hóa định dạng ngày
               gender: s.svGender || "Unknown",
-              phoneNumber: s.svPhoneNumber || "N/A", // Đổi phone -> phoneNumber
+              phoneNumber: s.svPhoneNumber || "N/A",
+              address: s.svAddress || "N/A",// Đổi phone -> phoneNumber
+              fbUrl: s.svFbUrl || "http://facebook.com/default",
             }))
             : [];
 
@@ -140,7 +148,13 @@ const UserManagement = () => {
       const newAccount = await createAccount(formData);
       alert("Tài khoản đã được tạo thành công!");
       console.log("Tài khoản mới:", newAccount);
-      setFormData({ username: "", password: "", role: "USER" });
+      setFormData({
+        aUid: "",
+        aPwd: "",
+        aType: 1,
+        aStatus: 1,
+        jsonData: "{}"
+      });
     } catch (error) {
       alert("Lỗi khi tạo tài khoản!");
     }
@@ -320,14 +334,12 @@ const UserManagement = () => {
             <div className="modal-content">
               <h2>Tạo tài khoản</h2>
               <form onSubmit={handleSubmit}>
-                <input type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Tên đăng nhập" required />
-                <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Mật khẩu" required />
-
-                <select name="role" value={formData.role} onChange={handleChange}>
-                  <option value="STUDENT">Học viên</option>
-                  <option value="TEACHER">Giáo viên</option>
+                <input type="text" name="aUid" placeholder="Tên tài khoản" value={formData.aUid} onChange={handleChange} required />
+                <input type="password" name="aPwd" placeholder="Mật khẩu" value={formData.aPwd} onChange={handleChange} required />
+                <select name="aType" value={formData.aType} onChange={handleChange}>
+                  <option value="1">Sinh viên</option>
+                  <option value="2">Giáo viên</option>
                 </select>
-
                 <div className="modal-buttons">
                   <button type="submit">Lưu</button>
                   <button type="button" onClick={toggleModal} className="cancel-btn">Hủy</button>
