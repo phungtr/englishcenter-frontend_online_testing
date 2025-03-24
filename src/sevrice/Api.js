@@ -24,6 +24,15 @@ export const getAllAccounts = async () => {
     throw error;
   }
 };
+export const createAccount = async (accountData) => {
+  try {
+    const response = await api.post('/account/create', accountData);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi tạo tài khoản:', error);
+    throw error;
+  }
+};
 export const getAllClasses = async () => {
   try {
     const response = await api.get('/classes/all');
