@@ -280,6 +280,7 @@ const UserManagement = () => {
       <Navbar></Navbar>
       <div className="user-management">
         <div className="user-container">
+          <div className="User-infor" >
           <h2 className="user-title">Quản lý người dùng</h2>
           <table className="user-table">
             <thead>
@@ -323,10 +324,13 @@ const UserManagement = () => {
               </button>
             </div>
           )}
+          </div>
+          <div className="user-option">
           <button className="export" onClick={toggleForm}>
             {showForm ? "Đóng form" : "Thêm người dùng"}
           </button>
           <button className="btn-create" onClick={toggleModal}>Tạo tài khoản</button>
+          </div>
         </div>
 
         {isOpen && (
@@ -337,8 +341,8 @@ const UserManagement = () => {
                 <input type="text" name="aUid" placeholder="Tên tài khoản" value={formData.aUid} onChange={handleChange} required />
                 <input type="password" name="aPwd" placeholder="Mật khẩu" value={formData.aPwd} onChange={handleChange} required />
                 <select name="aType" value={formData.aType} onChange={handleChange}>
-                  <option value="1">Sinh viên</option>
-                  <option value="2">Giáo viên</option>
+                  <option value="2">Sinh viên</option>
+                  <option value="1">Giáo viên</option>
                 </select>
                 <div className="modal-buttons">
                   <button type="submit">Lưu</button>

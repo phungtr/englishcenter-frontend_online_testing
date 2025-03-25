@@ -27,6 +27,9 @@
   padding: 16px;
   margin: 2% 1%;
 }
+.User-infor {
+  height: 700px;
+}
 
 .user-table {
   width: 100%;
@@ -99,7 +102,11 @@ table th {
 td {
   color: #000000;
 }
-
+.user-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 .User-management-button button {
   background: #28a745;
   color: white;

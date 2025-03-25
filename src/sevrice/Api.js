@@ -35,7 +35,7 @@ export const createAccount = async (accountData) => {
 };
 export const getAllClasses = async () => {
   try {
-    const response = await api.get('/classes/all');
+    const response = await api.get('/classes/getAll');
     return response.data;
   } catch (error) {
     console.error('Lỗi khi lấy danh sách lớp:', error);
