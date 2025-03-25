@@ -80,10 +80,10 @@
   
 }
 .button-container{
-  position:relative;
-  padding-left:1000px
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px; /* Tùy chỉnh nếu cần */
 }
-
   .export-button {
     padding: 10px 20px;
     background-color: #4f99e1;

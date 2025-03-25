@@ -42,7 +42,15 @@ export const getAllClasses = async () => {
     throw error;
   }
 };
-
+export const findClasses = async (classId) => {
+  try {
+    const response = await api.get(`/classes/find/${classId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách lớp:', error);
+    throw error;
+  }
+};
 export const schedules = async (schedule) => {
   try {
     const response = await api.get('/schedule/getAll', { params: schedule });
@@ -153,15 +161,6 @@ export const updateStudent = async (svId, updatedData) => {
 export const marks = async () =>{
   try {
     const response = await api.get(`/marks/all`);
-    return response.data;
-  }catch (error) {
-  console.error('Lỗi khi cập nhật sinh viên:', error);
-  throw error;
-  }
-};
-export const learningProgress = async (classId) =>{
-  try {
-    const response = await api.get(`/learning-progress/allStudentsInClass/${classId}`,classId);
     return response.data;
   }catch (error) {
   console.error('Lỗi khi cập nhật sinh viên:', error);

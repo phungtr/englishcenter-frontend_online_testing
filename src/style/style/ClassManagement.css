@@ -1,0 +1,79 @@
+.class-management {
+  display: flex;
+  background-color: wheat;
+  background-image: url("../acess/english-backhrod.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.class-management-control {
+  background: #fff;
+  height: 650px;
+  margin: 1%;
+}
+.contronl-firt {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  flex-wrap: wrap;
+}
+.class-list,
+.class-details {
+  margin-bottom: 20px;
+}
+
+.class-list ul,
+.class-details ul {
+  list-style: none;
+  padding: 0;
+}
+
+.class-list li,
+.class-details li {
+  padding: 10px;
+  margin: 5px 0;
+  background: #f4f4f4;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.class-list li:hover,
+.class-details li:hover {
+  background: #ddd;
+}
+
+select,
+input,
+button {
+  margin: 5px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  width:300px
+}
+
+button {
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.class-details p {
+  font-weight: bold;
+}
+
+.class-details select {
+  width: 100%;
+}

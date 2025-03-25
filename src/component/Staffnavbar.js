@@ -26,7 +26,7 @@ const Navbar = () => {
         <li><Link to="/teaching-schedule-report">Báo cáo lịch giáo viên</Link></li>
         <li><Link to="/user-management">Quản lý người dùng</Link></li>
         <li><Link to="/statistics">Thống kê</Link></li>
-        {/* <li><Link to="/Dasboard">Báo cáo thống kê</Link></li> */}
+        <li><Link to="/class-management">Quản lý lớp học</Link></li>
         <li><button  style={{background:" #256dbb"}} onClick={handleLogout} className="logout-button">
         Đăng xuất
       </button>
