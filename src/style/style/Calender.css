@@ -102,15 +102,6 @@
 .export-button:hover {
   background-color: #0056b3;
 }
-.event.tiếng-anh-trẻ-em { background: #ffdddd; }
-.event.ngữ-pháp-nâng-cao { background: #ddeeff; }
-.event.tiếng-anh-cấp-tốc { background: #ddffdd; }
-.event.luyện-nghe-và-nói { background: #ffeeaa; }
-.event.tiếng-anh-chuyên-nghành { background: #e5ddff; }
-.empty { background: #f9f9f9; }
-
-
-
 .container {
   text-align: center;
   margin-top: 20px;

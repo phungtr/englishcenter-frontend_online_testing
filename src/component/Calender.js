@@ -5,7 +5,9 @@ import * as XLSX from "xlsx";
 
 
 const Schedule = ({ schedule }) => {
+  const colors = ["#ffdddd", "#ddeeff", "#ddffdd", "#ffeeaa", "#e5ddff", "#f9f9f9"];
 
+  const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
   const exportToExcel = () => {
     const filteredSchedule = schedule.map(({ style, ...rest }) => rest);
     const ws = XLSX.utils.json_to_sheet(filteredSchedule);
@@ -77,12 +79,13 @@ const Schedule = ({ schedule }) => {
                   key={index}
                   className={eventClass}
                   style={{
+                    backgroundColor: getRandomColor(), 
                     gridColumnStart: dayIndex + 2,
                     top: `${top}px`,
                     height: `${height}px`,
                     position: "absolute",
-                    left: `${dayIndex * 255}px`,
-                    width: "255px",
+                    left: `${dayIndex * 188.5}px`,
+                    width: "188.5px",
                     borderRadius: "8px",
                     fontWeight: "bold",
                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",

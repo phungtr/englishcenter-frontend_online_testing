@@ -64,49 +64,49 @@ const UserManagement = () => {
       [name]: name === "aType" ? parseInt(value) : value, // Chuyển `aType` thành số
     }));
   };
+  const fetchData = async () => {
+    try {
+      const [studentData, teacherData] = await Promise.allSettled([
+        getAllStudents(),
+        getAllTeachers(),
+      ]);
+
+      const formattedStudents =
+        studentData.status === "fulfilled"
+          ? studentData.value.map((s) => ({
+            id: s.svId,
+            name: s.svName,
+            role: "STUDENT",
+            email: s.svEmail || "N/A",
+            dob: s.svDob ? s.svDob.split("T")[0] : "N/A", // Chuẩn hóa định dạng ngày
+            gender: s.svGender || "Unknown",
+            phoneNumber: s.svPhoneNumber || "N/A",
+            address: s.svAddress || "N/A",// Đổi phone -> phoneNumber
+            fbUrl: s.svFbUrl || "http://facebook.com/default",
+          }))
+          : [];
+
+      const formattedTeachers =
+        teacherData.status === "fulfilled"
+          ? teacherData.value.map((t) => ({
+            id: t.tcId,
+            name: t.tcName,
+            role: "TEACHER",
+            email: t.tcEmail || "N/A",
+            dob: t.tcDob ? t.tcDob.split("T")[0] : "N/A", // Chuẩn hóa định dạng ngày
+            gender: t.tcGender || "Unknown",
+            phoneNumber: t.tcPhoneNumber || "N/A", // Đổi phone -> phoneNumber
+          }))
+          : [];
+
+      const mergedUsers = [...formattedStudents, ...formattedTeachers];
+      setUsers(mergedUsers);
+      console.log("Merged Users:", mergedUsers);
+    } catch (error) {
+      console.error("Lỗi khi tải dữ liệu:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [studentData, teacherData] = await Promise.allSettled([
-          getAllStudents(),
-          getAllTeachers(),
-        ]);
-
-        const formattedStudents =
-          studentData.status === "fulfilled"
-            ? studentData.value.map((s) => ({
-              id: s.svId,
-              name: s.svName,
-              role: "STUDENT",
-              email: s.svEmail || "N/A",
-              dob: s.svDob ? s.svDob.split("T")[0] : "N/A", // Chuẩn hóa định dạng ngày
-              gender: s.svGender || "Unknown",
-              phoneNumber: s.svPhoneNumber || "N/A",
-              address: s.svAddress || "N/A",// Đổi phone -> phoneNumber
-              fbUrl: s.svFbUrl || "http://facebook.com/default",
-            }))
-            : [];
-
-        const formattedTeachers =
-          teacherData.status === "fulfilled"
-            ? teacherData.value.map((t) => ({
-              id: t.tcId,
-              name: t.tcName,
-              role: "TEACHER",
-              email: t.tcEmail || "N/A",
-              dob: t.tcDob ? t.tcDob.split("T")[0] : "N/A", // Chuẩn hóa định dạng ngày
-              gender: t.tcGender || "Unknown",
-              phoneNumber: t.tcPhoneNumber || "N/A", // Đổi phone -> phoneNumber
-            }))
-            : [];
-
-        const mergedUsers = [...formattedStudents, ...formattedTeachers];
-        setUsers(mergedUsers);
-        console.log("Merged Users:", mergedUsers);
-      } catch (error) {
-        console.error("Lỗi khi tải dữ liệu:", error);
-      }
-    };
     fetchData();
   }, []);
   const showModal = (user) => {
@@ -138,6 +138,7 @@ const UserManagement = () => {
         setUsers([...users, newUser]);
       }
       setShowForm(false);
+      await fetchData();
     } catch (error) {
       console.error("Lỗi khi lưu dữ liệu:", error);
     }
@@ -281,55 +282,55 @@ const UserManagement = () => {
       <div className="user-management">
         <div className="user-container">
           <div className="User-infor" >
-          <h2 className="user-title">Quản lý người dùng</h2>
-          <table className="user-table">
-            <thead>
-              <tr>
-                <th>Họ và Tên</th>
-                <th>Vai trò</th>
-                <th>Email</th>
-                <th>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedUsers.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.name}</td>
-                  <td>{user.role}</td>
-                  <td>{user.email}</td>
-                  <td>
-                    <button className="edit-button" onClick={() => showModal(user)}>Sửa</button>
-                  </td>
+            <h2 className="user-title">Quản lý người dùng</h2>
+            <table className="user-table">
+              <thead>
+                <tr>
+                  <th>Họ và Tên</th>
+                  <th>Vai trò</th>
+                  <th>Email</th>
+                  <th>Hành động</th>
                 </tr>
-              ))}
+              </thead>
+              <tbody>
+                {paginatedUsers.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.name}</td>
+                    <td>{user.role}</td>
+                    <td>{user.email}</td>
+                    <td>
+                      <button className="edit-button" onClick={() => showModal(user)}>Sửa</button>
+                    </td>
+                  </tr>
+                ))}
 
-            </tbody>
-          </table>
-          {totalPages > 1 && (
-            <div className="pagination-container">
-              <button
-                className="pagination-button"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-              >
-                &#60;
-              </button>
-              <span className="pagination-text">Trang {currentPage} / {totalPages}</span>
-              <button
-                className="pagination-button"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                &#62;
-              </button>
-            </div>
-          )}
+              </tbody>
+            </table>
+            {totalPages > 1 && (
+              <div className="pagination-container">
+                <button
+                  className="pagination-button"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                  &#60;
+                </button>
+                <span className="pagination-text">Trang {currentPage} / {totalPages}</span>
+                <button
+                  className="pagination-button"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  &#62;
+                </button>
+              </div>
+            )}
           </div>
           <div className="user-option">
-          <button className="export" onClick={toggleForm}>
-            {showForm ? "Đóng form" : "Thêm người dùng"}
-          </button>
-          <button className="btn-create" onClick={toggleModal}>Tạo tài khoản</button>
+            <button className="export" onClick={toggleForm}>
+              {showForm ? "Đóng form" : "Thêm người dùng"}
+            </button>
+            <button className="btn-create" onClick={toggleModal}>Tạo tài khoản</button>
           </div>
         </div>
 

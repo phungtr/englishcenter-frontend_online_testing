@@ -1,24 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../style/style/TeachingScheduleReport.css';
 import Schedule from '../../component/Calender';
 import Navbar from '../../component/Staffnavbar';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css"
 import { schedules, createSchedule } from '../../sevrice/Api';
 
 const TeachingScheduleReport = () => {
   const [schedule, setSchedule] = useState([]);
-  const [filters, setFilters] = useState({ lecturer: '', course: '', date: '' });
+  const [filters, setFilters] = useState({
+    lecturer: "",
+    course: "",
+    date: new Date().toISOString().split("T")[0] // Lấy ngày hiện tại theo YYYY-MM-DD
+  });
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const dateInputRef = useRef(null);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (dateInputRef.current) {
-        dateInputRef.current.focus(); // Focus vào input, giúp hiển thị date picker trên một số trình duyệt
-      }
-    }, 500); // Delay một chút để tránh lỗi trình duyệt chặn
-
-    return () => clearTimeout(timer);
-  }, []);
   const [form, setForm] = useState({
     classId: "",
     tcId: "",
@@ -53,66 +49,88 @@ const TeachingScheduleReport = () => {
     try {
       const { date, startTime, endTime, ...rest } = form;
       const creatorId = localStorage.getItem("aUid");
-
+  
       if (!creatorId) {
         alert("Lỗi: Không tìm thấy thông tin người tạo!");
         return;
       }
-      // Gộp ngày với giờ
+  
       const startDateTime = new Date(`${date}T${startTime}:00.000Z`).toISOString();
       const endDateTime = new Date(`${date}T${endTime}:00.000Z`).toISOString();
-
-      const newSchedule = await createSchedule({
-
+  
+      await createSchedule({
         creatorId,
         startTime: startDateTime,
         endTime: endDateTime,
         jsonData: JSON.stringify({ key: "value" }),
         ...rest,
       });
-
-      console.log("Thời khóa biểu đã tạo:", newSchedule);
-      setShowForm(false);
+  
       alert("Tạo thời khóa biểu thành công!");
+      setShowForm(false);
+      setForm({ classId: "", tcId: "", date: "", startTime: "", endTime: "", scheduleStatus: "ACTIVE" });
+  
+      await loadSchedule(); // Cập nhật lại danh sách sau khi thêm
     } catch (error) {
       alert("Lỗi khi tạo thời khóa biểu!");
     }
   };
+  const loadSchedule = async () => {
+    try {
+      const data = await schedules({});
+      const formattedData = Array.isArray(data) ? data : [data]; // Đảm bảo dữ liệu là mảng
+      setSchedule(formattedData);
+    } catch (error) {
+      console.error("Không thể tải thời khóa biểu:", error);
+    }
+  };
   useEffect(() => {
-    const loadSchedule = async () => {
-      try {
-        const data = await schedules({});
-        const formattedData = Array.isArray(data) ? data : [data]; // Đảm bảo dữ liệu là mảng
-        setSchedule(formattedData);
-      } catch (error) {
-        console.error("Không thể tải thời khóa biểu:", error);
-      }
-    };
-
     loadSchedule();
   }, []);
   const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prev) => {
-      const updatedFilters = {
-        ...prev,
-        [name]: value
-      };
-      applyFilters(updatedFilters);
-      return updatedFilters;
-    });
+    if (e instanceof Date) {
+      // Nếu e là Date (từ DatePicker), cập nhật filters.date
+      setFilters((prev) => {
+        const updatedFilters = { ...prev, date: e.toISOString().split("T")[0] };
+        applyFilters(updatedFilters);
+        return updatedFilters;
+      });
+    } else {
+      // Nếu e là sự kiện từ input (name, value)
+      const { name, value } = e.target;
+      setFilters((prev) => {
+        const updatedFilters = { ...prev, [name]: value };
+        applyFilters(updatedFilters);
+        return updatedFilters;
+      });
+    }
+  };
+  const getWeekRange = (dateString) => {
+    const date = new Date(dateString);
+    const dayOfWeek = date.getDay(); // Chủ nhật = 0, Thứ hai = 1, ..., Thứ bảy = 6
+    const startDate = new Date(date);
+    startDate.setDate(date.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Lấy Thứ Hai đầu tuần
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 6); // Lấy Chủ Nhật cuối tuần
+
+    return { start: startDate, end: endDate };
   };
   const applyFilters = (currentFilters) => {
+    const { start, end } = getWeekRange(currentFilters.date);
+
     return schedule.filter(schedule => {
-      const vietnamDate = new Date(schedule.startTime).toLocaleDateString("en-CA", { timeZone: "Asia/Ho_Chi_Minh" });
+      const vietnamDate = new Date(schedule.startTime);
+      vietnamDate.setHours(vietnamDate.getHours() + 7); // Chuyển sang giờ Việt Nam
+      const dateOnly = vietnamDate.toISOString().split("T")[0];
 
       return (
         (currentFilters.lecturer ? schedule.teacherName.toLowerCase().includes(currentFilters.lecturer.toLowerCase()) : true) &&
         (currentFilters.course ? schedule.className.toLowerCase().includes(currentFilters.course.toLowerCase()) : true) &&
-        (currentFilters.date ? vietnamDate === currentFilters.date : true) // So sánh ngày
+        (dateOnly >= start.toISOString().split("T")[0] && dateOnly <= end.toISOString().split("T")[0]) // Kiểm tra trong tuần
       );
     });
   };
+
   const filteredSchedule = Array.isArray(schedule)
     ? schedule.map(report => ({
       classId: report.classId,
@@ -130,6 +148,7 @@ const TeachingScheduleReport = () => {
       <div style={{ alignItems: "center", display: "flex" }}>  <Navbar /></div>
       <div className='schedule-middle'>
         <div className='right-container'>
+        <div></div>
           <div className="container">
             <div className="container-open-form">
               <button onClick={() => setShowForm(true)} className="open-form-button">
@@ -156,9 +175,13 @@ const TeachingScheduleReport = () => {
             )}
           </div>
           <div className="filter-container">
+          <div className="filter-class">
             <input type="text" name="lecturer" placeholder="Lọc theo giảng viên" value={filters.teacherName} onChange={handleFilterChange} />
             <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.className} onChange={handleFilterChange} />
-            <input type="date" name="date" value={filters.date} onChange={handleFilterChange} ref={dateInputRef} />
+            </div>
+            <div className="filter-Weekday">
+            <DatePicker selected={new Date(filters.date)} onChange={handleFilterChange} inline dateFormat="yyyy-MM-dd"  className="custom-datepicker" />
+            </div>
           </div>
         </div>
 
