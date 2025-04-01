@@ -117,16 +117,18 @@ const TeachingScheduleReport = () => {
   };
   const applyFilters = (currentFilters) => {
     const { start, end } = getWeekRange(currentFilters.date);
-
+  
     return schedule.filter(schedule => {
       const vietnamDate = new Date(schedule.startTime);
-      vietnamDate.setHours(vietnamDate.getHours() + 7); // Chuyển sang giờ Việt Nam
+      vietnamDate.setHours(vietnamDate.getHours() + 7);
       const dateOnly = vietnamDate.toISOString().split("T")[0];
-
+  
       return (
         (currentFilters.lecturer ? schedule.teacherName.toLowerCase().includes(currentFilters.lecturer.toLowerCase()) : true) &&
         (currentFilters.course ? schedule.className.toLowerCase().includes(currentFilters.course.toLowerCase()) : true) &&
-        (dateOnly >= start.toISOString().split("T")[0] && dateOnly <= end.toISOString().split("T")[0]) // Kiểm tra trong tuần
+        (dateOnly >= start.toISOString().split("T")[0] && dateOnly <= end.toISOString().split("T")[0]) && 
+        (vietnamDate.getMonth() + 1 === currentFilters.month) &&
+        (vietnamDate.getFullYear() === currentFilters.year)
       );
     });
   };
@@ -180,7 +182,7 @@ const TeachingScheduleReport = () => {
             <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.className} onChange={handleFilterChange} />
             </div>
             <div className="filter-Weekday">
-            <DatePicker selected={new Date(filters.date)} onChange={handleFilterChange} inline dateFormat="yyyy-MM-dd"  className="custom-datepicker" />
+            <DatePicker selected={new Date(filters.date)} onChange={handleFilterChange} inline dateFormat="yyyy-MM-dd"  className="custom-datepicker"/>
             </div>
           </div>
         </div>
