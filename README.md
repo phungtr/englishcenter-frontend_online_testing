@@ -18,7 +18,7 @@ Dự án này là một hệ thống quản lý trung tâm tiếng Anh trên n�
 ### Sao Chép Kho Lưu Trữ  
 ```sh
 git clone https://github.com/phungtr/englishcenter-frontend_online_testing.git
-cd .\englishcenter_frontend_online_testing\
+cd english-center-management
 
 
 ### Cài đặt các gói phụ thuộc
@@ -32,7 +32,7 @@ npm start
 ```
 Ứng dụng sẽ chạy tại `http://localhost:3000`.
 
-## Chạy kiểm thử
+## Testing
 Dự án này bao gồm các bài kiểm thử giao diện người dùng (UI) bằng Jest và React Testing Library.
 Để chạy kiểm thử, sử dụng lệnh sau:
 ```sh
