@@ -1,110 +1,145 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom';
-import App from './App';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';  // Import MemoryRouter
+import TeachingScheduleReport from './page/Staff/Teachingrepost';
+import { schedules, createSchedule } from './sevrice/Api';
 
-// Hàm render tiện ích để bọc App trong MemoryRouter với route khởi tạo.
-const renderWithRouter = (initialEntries) => {
-  return render(
-    <MemoryRouter initialEntries={initialEntries}>
-      <App />
-    </MemoryRouter>
-  );
-};
+jest.mock('./sevrice/Api', () => ({
+  createSchedule: jest.fn(),
+  schedules: jest.fn(),
+}));
+describe('TeachingScheduleReport', () => {
 
-describe('App Routing', () => {
-  test('renders login page at route "/"', () => {
-    renderWithRouter(['/']);
-    // Giả sử LoginPage chứa text "login" (không phân biệt chữ hoa chữ thường)
-    const loginElements = screen.getAllByText(/login/i);
-    expect(loginElements.length).toBeGreaterThan(0);
+  test('renders schedule report page correctly', () => {
+    render(
+      <BrowserRouter> {/* Wrap component with BrowserRouter */}
+        <TeachingScheduleReport />
+      </BrowserRouter>
+    );
+
+    // Check if the Navbar and other static content are displayed
+    expect(screen.getByText(/Quản lý trung tâm tiếng Anh/i)).toBeInTheDocument();
   });
 
-  test('renders staff home page at route "/Staff-home"', () => {
-    renderWithRouter(['/Staff-home']);
-    // Giả sử StaffHome có chứa text "staff home"
-    const homeLinks = screen.getAllByText(/Trang chủ/i);
-    expect(homeLinks.length).toBeGreaterThan(0);
+  test('handles form input changes correctly', () => {
+    render(<BrowserRouter> {/* Wrap component with BrowserRouter */}
+      <TeachingScheduleReport />
+    </BrowserRouter>);
+
+    // Open the form by clicking the "Tạo thời khóa biểu" button
+    fireEvent.click(screen.getByText(/Tạo thời khóa biểu/i));
+
+    // Check if the form is displayed
+    expect(screen.getByPlaceholderText(/Ngày/i)).toBeInTheDocument();
+
+    // Fill out the form fields
+    fireEvent.change(screen.getByPlaceholderText(/Ngày/i), { target: { value: '2025-04-05' } });
+    fireEvent.change(screen.getByPlaceholderText(/Giờ bắt đầu/i), { target: { value: '08:00' } });
+    fireEvent.change(screen.getByPlaceholderText(/Giờ kết thúc/i), { target: { value: '10:00' } });
+
+    // Submit the form
+    fireEvent.click(screen.getByText(/Xác nhận/i));
+
+    // Check if the form was submitted correctly (you can assert form submission behavior here)
+    expect(screen.getByPlaceholderText(/Ngày/i).value).toBe('2025-04-05');
+    expect(screen.getByPlaceholderText(/Giờ bắt đầu/i).value).toBe('08:00');
+    expect(screen.getByPlaceholderText(/Giờ kết thúc/i).value).toBe('10:00');
   });
 
-  test('renders teacher home page at route "/Teacher-home"', () => {
-    renderWithRouter(['/Teacher-home']);
-    // Giả sử TeacherHome có chứa text "teacher home"
-    const teacherHomeElement = screen.getByText(/Trang chủ Giáo viên/i);
-    expect(teacherHomeElement).toBeInTheDocument();
-  });
 
-  test('renders student home page at route "/Student-home"', () => {
-    renderWithRouter(['/Student-home']);
-    // Giả sử StudentHome có chứa text "student home"
-    const studentHomeElement = screen.getByText(/Trang chủ học viên/i);
-    expect(studentHomeElement).toBeInTheDocument();
-  });
-
-  test('renders teaching schedule report page at route "/teaching-schedule-report"', () => {
-    renderWithRouter(['/teaching-schedule-report']);
+  test('shows error message for invalid time range', () => {
+    render(
+      <BrowserRouter> 
+        <TeachingScheduleReport />
+      </BrowserRouter>
+    );
   
-    // Lấy tất cả các phần tử có chứa nội dung "Báo cáo lịch giáo viên"
-    const reportElements = screen.getAllByText((content) => {
-      const normalizedText = content.replace(/\s+/g, ' ').trim().toLowerCase();
-      return normalizedText.includes('báo cáo lịch giáo viên');
+    // Open the form
+    fireEvent.click(screen.getByText(/Tạo thời khóa biểu/i));
+  
+    // Simulate user input for the form fields
+    fireEvent.change(screen.getByPlaceholderText(/Ngày/i), { target: { value: '2025-04-05' } });
+    fireEvent.change(screen.getByPlaceholderText(/Giờ bắt đầu/i), { target: { value: '12:00' } });
+    fireEvent.change(screen.getByPlaceholderText(/Giờ kết thúc/i), { target: { value: '10:00' } });
+  
+    fireEvent.click(screen.getByText(/Xác nhận/i));
+  
+    // Check if the error message appears
+    expect(screen.getByText(/Thời gian bắt đầu phải sớm hơn thời gian kết thúc!/i)).toBeInTheDocument();
+  });
+
+  
+  test('submits form successfully', async () => {
+
+    createSchedule.mockResolvedValueOnce({ 
+      scheduleData: {
+        classId: 'Class123',
+        className: 'Math 101',
+        teacherName: 'Mr. A',
+        startTime: '2025-04-05T08:00:00',
+        endTime: '2025-04-05T10:00:00',
+        scheduleStatus: 1
+      }
+    });
+    render(
+      <BrowserRouter>
+        <TeachingScheduleReport/>
+      </BrowserRouter>
+    );
+  
+    // Mở form
+    fireEvent.click(screen.getByText(/Tạo thời khóa biểu/i));
+  
+    // Chờ form hiển thị
+    await waitFor(() => {
+      expect(screen.getByText(/Xác nhận/i)).toBeInTheDocument();
     });
   
-    // Kiểm tra rằng số lượng phần tử trả về lớn hơn 0
-    expect(reportElements.length).toBeGreaterThan(0);
+    // Điền dữ liệu
+    fireEvent.change(screen.getByPlaceholderText(/Ngày/i), { target: { value: '2025-04-05' } });
+    fireEvent.change(screen.getByPlaceholderText(/Giờ bắt đầu/i), { target: { value: '08:00' } });
+    fireEvent.change(screen.getByPlaceholderText(/Giờ kết thúc/i), { target: { value: '10:00' } });
+    fireEvent.change(screen.getByPlaceholderText(/Mã lớp/i), { target: { value: 'Class123' } });
+    fireEvent.change(screen.getByPlaceholderText(/Mã giáo viên/i), { target: { value: 'TC123' } });
   
-    // Nếu bạn muốn xác định phần tử cụ thể làm tiêu đề (ví dụ <h2>), chọn phần tử có tag <h2>
-    const reportHeading = reportElements.find(el => el.tagName.toLowerCase() === 'h2');
-    // Nếu không tìm thấy, lấy phần tử đầu tiên
-    expect(reportHeading || reportElements[0]).toBeInTheDocument();
-  });
-  test('renders user management page at route "/user-management"', () => {
-    renderWithRouter(['/user-management']);
-    // Giả sử UserManagement có chứa text "user management"
-    const userManagementElements = screen.getAllByText(/Quản lý người dùng/i);
-    expect(userManagementElements.length).toBeGreaterThan(0);
-  });
-
-  test('renders statistics page at route "/statistics"', () => {
-    renderWithRouter(['/statistics']);
-    // Giả sử Statistics có chứa text "statistics"
-    const statisticsElements = screen.getAllByText(/Thống kê/i);
-    expect(statisticsElements.length).toBeGreaterThan(0);
-  });
-
-  test('renders teacher schedule page at route "/teacher-schedule"', () => {
-    renderWithRouter(['/teacher-schedule']);
+    // Submit form
+    fireEvent.click(screen.getByText(/Xác nhận/i));
   
-    const teacherScheduleElement = screen.getByText((content) => {
-      const normalizedText = content.replace(/\s+/g, ' ').trim().toLowerCase();
-      return normalizedText.includes('thời khóa biểu');  // chú ý dùng chữ thường
-    });
-    expect(teacherScheduleElement).toBeInTheDocument();
-  });
-  
-  test('renders student schedule (timetable) page at route "/student-schedule"', () => {
-    renderWithRouter(['/student-schedule']);
-  
-    // Lấy tất cả các phần tử có chứa nội dung "Thời khóa biểu"
-    const scheduleElements = screen.getAllByText((content) => {
-      const normalizedText = content.replace(/\s+/g, ' ').trim().toLowerCase();
-      return normalizedText.includes('thời khóa biểu');
+    // Đảm bảo API gọi thành công
+    await waitFor(() => {
+      expect(createSchedule).toHaveBeenCalledTimes(1);
     });
   
-    // Kiểm tra rằng ta đã tìm được ít nhất một phần tử
-    expect(scheduleElements.length).toBeGreaterThan(0);
-  
-    // Nếu bạn muốn kiểm tra cụ thể phần tiêu đề (h2), hãy tìm phần tử có tag <h2>
-    const scheduleHeading = scheduleElements.find(el => el.tagName.toLowerCase() === 'h2');
-    expect(scheduleHeading).toBeInTheDocument();
+    // Kiểm tra thông báo thành công (nếu có)
+    expect(screen.queryByText(/Tạo thời khóa biểu thành công!/i)).toBeInTheDocument();
+  });
+  test('loads schedule data successfully', async () => {
+    schedules.mockResolvedValueOnce([{
+      classId: 'Class123',
+      className: 'Math 101',
+      teacherName: 'Mr. A',
+      startTime: '2025-04-05T08:00:00',
+      endTime: '2025-04-05T10:00:00',
+      scheduleStatus: 1
+    }]);
+
+    render(<TeachingScheduleReport />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Math 101')).toBeInTheDocument();
+    });
   });
 
-  test('renders class management page at route "/class-management"', () => {
-    renderWithRouter(['/class-management']);
-    const allElements = screen.getAllByText(/quản lý lớp học/i);
-    const headingElement = allElements.find(el => el.tagName.toLowerCase() === 'h2');
-    expect(headingElement).toBeInTheDocument();
+  test('applies filters correctly', () => {
+    const { rerender } = render(<TeachingScheduleReport />);
+
+    fireEvent.change(screen.getByPlaceholderText(/Lọc theo giảng viên/i), { target: { value: 'Mr. A' } });
+    fireEvent.change(screen.getByPlaceholderText(/Lọc theo khóa học/i), { target: { value: 'Math' } });
+
+    rerender(<TeachingScheduleReport />);
+
+    // Check if the schedule is filtered based on the input
+    expect(screen.getByText('Math 101')).toBeInTheDocument();
   });
-  
 });

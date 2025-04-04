@@ -1,5 +1,6 @@
 import React from 'react';
 import {Route, Routes } from 'react-router-dom';
+import { BrowserRouter} from "react-router-dom";  
 import LoginPage from './page/login';
 import TeachingScheduleReport from './page/Staff/Teachingrepost';
 import UserManagement from './page/Staff/UserManagement';
@@ -14,6 +15,7 @@ import ClassManagement from './page/Staff/ClassManagement'
 function App() {
 
   return (
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/Staff-home" element={<StaffHome/>} />
@@ -26,7 +28,9 @@ function App() {
         <Route path='/student-schedule' element={<TimeTable/>}/>
         <Route path='/class-management' element= {<ClassManagement/>}/>
       </Routes>
+    </BrowserRouter> 
   );
 }
 
 export default App;
+

@@ -29,14 +29,18 @@ const TeachingScheduleReport = () => {
       const updatedForm = { ...prevForm, [name]: value };
 
       // Kiểm tra nếu startTime hoặc endTime thay đổi
-      if (updatedForm.date && updatedForm.startTime && updatedForm.endTime) {
-        const startDateTime = new Date(`${updatedForm.date}T${updatedForm.startTime}:00`);
-        const endDateTime = new Date(`${updatedForm.date}T${updatedForm.endTime}:00`);
-
-        if (startDateTime >= endDateTime) {
-          setError("Thời gian bắt đầu phải sớm hơn thời gian kết thúc!");
+      if (updatedForm.startTime && updatedForm.endTime) {
+        if (!updatedForm.date) {
+          setError("Vui lòng chọn ngày trước khi nhập thời gian!");
         } else {
-          setError("");
+          const startDateTime = new Date(`${updatedForm.date}T${updatedForm.startTime}:00`);
+          const endDateTime = new Date(`${updatedForm.date}T${updatedForm.endTime}:00`);
+
+          if (startDateTime >= endDateTime) {
+            setError("Thời gian bắt đầu phải sớm hơn thời gian kết thúc!");
+          } else {
+            setError("");
+          }
         }
       }
 
@@ -163,9 +167,9 @@ const TeachingScheduleReport = () => {
                 <div className="form-container">
                   <h2>Thêm thời khóa biểu</h2>
                   <form onSubmit={handleSubmit}>
-                    <input type="date" name="date" value={form.date} onChange={handleChange} required className="input-field" />
-                    <input type="time" name="startTime" value={form.startTime} onChange={handleChange} required className="input-field" />
-                    <input type="time" name="endTime" value={form.endTime} onChange={handleChange} required className="input-field" />
+                    <input type="date" name="date" placeholder="Ngày" value={form.date} onChange={handleChange} required className="input-field" />
+                    <input type="time" name="startTime" placeholder="Giờ bắt đầu"  value={form.startTime} onChange={handleChange} required className="input-field" />
+                    <input type="time" name="endTime" placeholder="Giờ kết thúc"  value={form.endTime} onChange={handleChange} required className="input-field" />
                     <input name="classId" placeholder="Mã lớp" value={form.classId} onChange={handleChange} required className="input-field" />
                     <input name="tcId" placeholder="Mã giáo viên" value={form.tcId} onChange={handleChange} required className="input-field" />
                     {error && <p className="error-message">{error}</p>}
