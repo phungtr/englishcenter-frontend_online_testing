@@ -8,21 +8,25 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
+
 .class-management-control {
   background: #fff;
   height: 650px;
   margin: 1%;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-.contronl-firt {
+
+.control-first {
   display: flex;
-  flex-direction: column;
-  align-content: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
+
 .class-list,
 .class-details {
   margin-bottom: 20px;
@@ -57,7 +61,7 @@ button {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
-  width:300px
+  width: 300px;
 }
 
 button {
@@ -77,3 +81,5 @@ button:hover {
 .class-details select {
   width: 100%;
 }
+
+

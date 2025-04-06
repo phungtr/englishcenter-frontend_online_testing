@@ -17,7 +17,7 @@ const TeacherNavbar = () => {
         <li><Link to="/Teacher-home">Trang chủ</Link></li>
         <li><Link to="/teacher-schedule">Lịch dạy</Link></li>
         <li><Link to="/teacher-students">Danh sách học viên</Link></li>
-        <li><Link to="/teacher-reports">Báo cáo giảng dạy</Link></li>
+        <li><Link to="/teacher-respo">Tổng hợp bài giảng</Link></li>
         <li><Link to="/teacher-support">Hỗ trợ</Link></li>
         <li>
           <button style={{ background: "#256dbb" }} onClick={handleLogout} className="logout-button">

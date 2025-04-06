@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/style/TeachingScheduleReport.css';
 import Schedule from '../../component/Calender';
-import Navbar from '../../component/StudentNavbar';
+import StudentNavbar from '../../component/StudentNavbar';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ScheduleStudent, getAllAccounts, getAllStudents } from '../../sevrice/Api';
@@ -94,9 +94,9 @@ const TimeTable = () => {
   const filteredSchedule = Array.isArray(schedule)
     ? schedule.map(report => ({
       classId: report.classId,
-      className: report.classes.className,
+      className: report.className,
       tcId: report.tcId,
-      teacherName: report.classes.teacher.tcName,
+      teacherName: report.tcName,
       startTime: report.startTime,
       endTime: report.endTime,
       scheduleStatus: report.scheduleStatus
@@ -105,7 +105,7 @@ const TimeTable = () => {
 
   return (
     <div className="schedule-container">
-      <div style={{ alignItems: "center", display: "flex" }}> <Navbar /></div>
+      <div style={{ alignItems: "center", display: "flex" }}> <StudentNavbar /></div>
       <div className='schedule-middle'>
         <div className='right-container'>
           <div></div>

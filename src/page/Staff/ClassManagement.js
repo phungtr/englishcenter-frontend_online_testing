@@ -1,8 +1,9 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { useState, useEffect } from "react";
 import { getAllClasses, getAllStudentsInClass, addStudentToClass, getAllStudents, getAllTeachers, findClasses, updateStudent } from "../../sevrice/Api";
 import * as XLSX from "xlsx";
 import "../../style/style/ClassManagement.css";
-import Navbar from '../../component/Staffnavbar'
+import Navbar from '../../component/Staffnavbar';
 
 const ClassManagement = () => {
   const [classes, setClasses] = useState([]);
@@ -92,65 +93,62 @@ const ClassManagement = () => {
     <div className="class-control">
       <Navbar />
       <div className="class-management">
-      <div className="class-management-control">
-        <h2 style={{frontSize:"30px"}}>Quản lý Lớp Học</h2>
-        <div className="contronl-firt">
-        <input type="text" placeholder="Tìm kiếm lớp..." value={searchClass} onChange={(e) => setSearchClass(e.target.value)} />
-        <select value={activeStatus} onChange={(e) => setActiveStatus(e.target.value)}>
-          <option value="">Tất cả trạng thái</option>
-          <option value="1">Hoạt động</option>
-          <option value="0">Không hoạt động</option>
-        </select>
-        </div>
-
-        <div className="class-list">
-          <h3>Danh sách lớp</h3>
-          <ul>
-            {filteredClasses.map((cls) => (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-              <li key={cls.classId} onClick={() => handleClassSelect(cls.classId)}>
-                {cls.className} ({cls.classStatus === 1 ? "Hoạt động" : "Không hoạt động"})
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {selectedClass && (
-          <div className="class-details">
-            <h3>Chi tiết lớp - {selectedClassName}</h3>
-            <p>Giáo viên: {selectedTeacher}</p>
-            <p>Học viên mới thêm: {newStudentName || "Chưa có"}</p>
-            <h3>Chọn giáo viên mới</h3>
-            <select value={newTeacher} onChange={(e) => setNewTeacher(e.target.value)}>
-              <option value="">Chọn giáo viên</option>
-              {allTeachers.map((teacher) => (
-                <option key={teacher.tcId} value={teacher.tcName}>{teacher.tcName}</option>
-              ))}
+        <div className="class-management-control">
+          <h2 style={{ fontSize: "30px" }}>Quản lý Lớp Học</h2>
+          <div className="control-first">
+            <input type="text" placeholder="Tìm kiếm lớp..." value={searchClass} onChange={(e) => setSearchClass(e.target.value)} />
+            <select value={activeStatus} onChange={(e) => setActiveStatus(e.target.value)}>
+              <option value="">Tất cả trạng thái</option>
+              <option value="1">Hoạt động</option>
+              <option value="0">Không hoạt động</option>
             </select>
-            <h3>Danh sách học viên</h3>
+          </div>
+          <div className="class-list">
+            <h3>Danh sách lớp</h3>
             <ul>
-              {students.map((student) => (
-                <li key={student.svId}>
-                  {student.svName}
-                  <button onClick={() => setEditingStudent(student)}>Sửa</button>
+              {filteredClasses.map((cls) => (
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+                <li key={cls.classId} onClick={() => handleClassSelect(cls.classId)}>
+                  {cls.className} ({cls.classStatus === 1 ? "Hoạt động" : "Không hoạt động"})
                 </li>
               ))}
             </ul>
-            {editingStudent && (
-              <div>
-                <h3>Chỉnh sửa thông tin học viên</h3>
-                <input type="text" placeholder="Tên" value={updatedStudentData.svName || editingStudent.svName} onChange={(e) => setUpdatedStudentData({ ...updatedStudentData, svName: e.target.value })} />
-                <input type="email" placeholder="Email" value={updatedStudentData.svEmail || editingStudent.svEmail} onChange={(e) => setUpdatedStudentData({ ...updatedStudentData, svEmail: e.target.value })} />
-                <button onClick={handleUpdateStudent}>Cập nhật</button>
-              </div>
-            )}
-            <button onClick={handleAddStudent}>Thêm học viên</button>
-            <button onClick={exportToExcel}>Xuất danh sách học viên</button>
           </div>
-        )}
+          {selectedClass && (
+            <div className="class-details">
+              <h3>Chi tiết lớp - {selectedClassName}</h3>
+              <p>Giáo viên: {selectedTeacher}</p>
+              <p>Học viên mới thêm: {newStudentName || "Chưa có"}</p>
+              <h3>Chọn giáo viên mới</h3>
+              <select value={newTeacher} onChange={(e) => setNewTeacher(e.target.value)}>
+                <option value="">Chọn giáo viên</option>
+                {allTeachers.map((teacher) => (
+                  <option key={teacher.tcId} value={teacher.tcName}>{teacher.tcName}</option>
+                ))}
+              </select>
+              <h3>Danh sách học viên</h3>
+              <ul>
+                {students.map((student) => (
+                  <li key={student.svId}>
+                    {student.svName}
+                    <button onClick={() => setEditingStudent(student)}>Sửa</button>
+                  </li>
+                ))}
+              </ul>
+              {editingStudent && (
+                <div>
+                  <h3>Chỉnh sửa thông tin học viên</h3>
+                  <input type="text" placeholder="Tên" value={updatedStudentData.svName || editingStudent.svName} onChange={(e) => setUpdatedStudentData({ ...updatedStudentData, svName: e.target.value })} />
+                  <input type="email" placeholder="Email" value={updatedStudentData.svEmail || editingStudent.svEmail} onChange={(e) => setUpdatedStudentData({ ...updatedStudentData, svEmail: e.target.value })} />
+                  <button onClick={handleUpdateStudent}>Cập nhật</button>
+                </div>
+              )}
+              <button onClick={handleAddStudent}>Thêm học viên</button>
+              <button onClick={exportToExcel}>Xuất danh sách học viên</button>
+            </div>
+          )}
+        </div>
       </div>
-      </div>
-
       <footer className="footer-container">
         <div className="footer-section">
           <h3>Quản lý trung tâm tiếng Anh</h3>
@@ -173,7 +171,7 @@ const ClassManagement = () => {
           </ul>
         </div>
         <div className="footer-bottom">
-          <p>&copy; Bản quyền thuộc về Phùng Quang Trà | Cung cấp bởi Nhóm 1</p>
+          <p>© Bản quyền thuộc về Phùng Quang Trà | Cung cấp bởi Nhóm 1</p>
         </div>
       </footer>
     </div>

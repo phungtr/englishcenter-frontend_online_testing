@@ -186,3 +186,16 @@ export const marks = async () =>{
   throw error;
   }
 };
+export const getMarksByClassId = async (classId) => {
+  const response = await api.get(`/mark/class/${classId}`);
+  return response.data;
+};
+export const getMarksBystudentId = async (studentId) => {
+  const response = await api.get(`/mark/student/${studentId}`);
+  return response.data;
+};
+// Cập nhật điểm và nhận xét học sinh
+export const updateStudentMark = async (studentId, markDto) => {
+  const response = await api.put(`/mark/student/update/${studentId}`, markDto);
+  return response.data;
+};

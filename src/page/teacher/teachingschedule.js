@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/style/TeachingScheduleReport.css';
 import Schedule from '../../component/Calender';
-import Navbar from '../../component/Teachernavbar';
+import TeacherNavbar from '../../component/Teachernavbar';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ScheduleTeacher, getAllAccounts, getAllTeachers } from '../../sevrice/Api';
@@ -105,10 +105,9 @@ const TeachingSchedule = () => {
 
   return (
     <div className="schedule-container">
-      <div style={{ alignItems: "center", display: "flex" }}> <Navbar /></div>
+      <div style={{ alignItems: "center", display: "flex" }}> <TeacherNavbar /></div>
       <div className='schedule-middle'>
         <div className='right-container'>
-          <div></div>
           <div className="container">
             <div className="filter-container">
               <div className="filter-Weekday">
