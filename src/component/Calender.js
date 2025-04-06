@@ -1,20 +1,23 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import "../style/style/Calender.css";
-import * as XLSX from "xlsx";
+
 
 
 const Schedule = ({ schedule }) => {
   const colors = ["#ffdddd", "#ddeeff", "#ddffdd", "#ffeeaa", "#e5ddff", "#f9f9f9"];
-
   const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
-  const exportToExcel = () => {
-    const filteredSchedule = schedule.map(({ style, ...rest }) => rest);
-    const ws = XLSX.utils.json_to_sheet(filteredSchedule);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Schedule");
-    XLSX.writeFile(wb, "ThoiKhoaBieu.xlsx");
-  };
+  // eslint-disable-next-line
+  const colorMapRef = useRef({}); // Giữ nguyên map qua các lần render
+
+  useEffect(() => {
+    schedule.forEach((item) => {
+      const key = item.className;
+      if (!colorMapRef.current[key]) {
+        colorMapRef.current[key] = getRandomColor();
+      }
+    });
+  }, [schedule]); 
 
   const days = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"];
   const timeSlots = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00"];
@@ -73,13 +76,12 @@ const Schedule = ({ schedule }) => {
               const height = timeToPosition(endTimeValue) - top;
               const dayIndex = getDayIndex(schedule?.startTime);
               const eventClass = `event ${schedule.className.toLowerCase().replace(/\s+/g, "-")}`;
-              console.log(dayIndex);
               return (
                 <div
                   key={index}
                   className={eventClass}
                   style={{
-                    backgroundColor: getRandomColor(), 
+                    backgroundColor: colorMapRef.current[schedule.className],
                     gridColumnStart: dayIndex + 2,
                     top: `${top}px`,
                     height: `${height}px`,
@@ -104,9 +106,7 @@ const Schedule = ({ schedule }) => {
           </div>
         </div>
       </div>
-      <div className="button-container" >
-        <button onClick={exportToExcel} className="export-button">Xuất Excel</button>
-      </div>
+
     </div>
   );
 };

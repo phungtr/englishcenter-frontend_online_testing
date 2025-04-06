@@ -1,116 +1,125 @@
 import React, { useState, useEffect } from 'react';
+import '../../style/style/TeachingScheduleReport.css';
 import Schedule from '../../component/Calender';
-import { schedules, getAllClasses, getAllStudents } from '../../sevrice/Api';
-import StudentNavbar from '../../component/StudentNavbar';
+import Navbar from '../../component/StudentNavbar';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { ScheduleStudent, getAllAccounts, getAllStudents } from '../../sevrice/Api';
 
 const TimeTable = () => {
   const [schedule, setSchedule] = useState([]);
-  const [filteredSchedule, setFilteredSchedule] = useState([]);
-  const [studentClasses, setStudentClasses] = useState([]);
-  const [filters, setFilters] = useState({ className: '', date: '' });
-  const [studentId, setStudentId] = useState(null);
-  
-  useEffect(() => {
-    console.log('Student ID:', studentId);
-  }, [studentId]);
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const username = localStorage.getItem('username');  
-        if (!username) {
-          console.error('Không tìm thấy username trong localStorage!');
-          return;
-        }
-  
-        // Lấy danh sách sinh viên
-        const students = await getAllStudents();
-        console.log('students:', students);
-        if (!students || students.length === 0) {
-          console.error('Không thể tải danh sách sinh viên!');
-          return;
-        }
-  
-        // Tìm sinh viên khớp với username
-        const loggedStudent = students.find(s => s.account?.aUid === username);
-        console.log('loggedStudent:', loggedStudent);
-        if (!loggedStudent) {
-          console.error('Không tìm thấy sinh viên với username:', username);
-          return;
-        }
-  
-        console.log('loggedStudent:', loggedStudent);
-        setStudentId(loggedStudent.svId);
-  
-        // Lấy danh sách lớp
-        const classData = await getAllClasses();
-        if (!classData) {
-          console.error('Không thể tải danh sách lớp!');
-          return;
-        }
-  
-        const studentClasses = classData.filter(cls => 
-          cls.students?.some(s => s.svId === loggedStudent.svId)
-        );
-        setStudentClasses(studentClasses);
-  
-        // Lấy danh sách lịch học
-        const scheduleData = await schedules({});
-        if (!scheduleData) {
-          console.error('Không thể tải lịch học!');
-          return;
-        }
-  
-        const studentSchedule = scheduleData.filter(item =>
-          studentClasses.some(cls => cls.classId === item.classId) && item.scheduleStatus === 1
-        );
-  
-        setSchedule(studentSchedule);
-        setFilteredSchedule(studentSchedule);
-  
-      } catch (error) {
-        console.error('Lỗi khi tải dữ liệu:', error);
+  const [filters, setFilters] = useState({
+    date: new Date().toISOString().split("T")[0] // Lấy ngày hiện tại theo YYYY-MM-DD
+  });
+
+  const loadSchedule = async () => {
+    try {
+      const username = localStorage.getItem('username');
+      const password = localStorage.getItem('password');
+
+      if (!username || !password) {
+        alert("Lỗi: Không tìm thấy thông tin đăng nhập!");
+        return;
       }
-    };
-  
-    fetchData();
+
+      const accounts = await getAllAccounts();
+      const account = accounts.find(acc => acc.aUid === username && acc.aPwd === password);
+
+      if (!account) {
+        alert("Lỗi: Tài khoản không hợp lệ!");
+        return;
+      }
+
+      const students = await getAllStudents();
+      const student = students.find(stu => stu.aId === account.aId);
+
+      if (!student) {
+        alert("Lỗi: Không tìm thấy sinh viên!");
+        return;
+      }
+
+      const data = await ScheduleStudent(student.svId);
+      const formattedData = Array.isArray(data) ? data : [data]; // Đảm bảo dữ liệu là mảng
+      setSchedule(formattedData);
+    } catch (error) {
+      console.error("Không thể tải thời khóa biểu:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadSchedule();
   }, []);
-  
 
   const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => {
-      const updatedFilters = { ...prev, [name]: value };
-      applyFilters(updatedFilters);
-      return updatedFilters;
-    });
+    if (e instanceof Date) {
+      // Nếu e là Date (từ DatePicker), cập nhật filters.date
+      setFilters((prev) => {
+        const updatedFilters = { ...prev, date: e.toISOString().split("T")[0] };
+        applyFilters(updatedFilters);
+        return updatedFilters;
+      });
+    } else {
+      // Nếu e là sự kiện từ input (name, value)
+      const { name, value } = e.target;
+      setFilters((prev) => {
+        const updatedFilters = { ...prev, [name]: value };
+        applyFilters(updatedFilters);
+        return updatedFilters;
+      });
+    }
+  };
+
+  const getWeekRange = (dateString) => {
+    const date = new Date(dateString);
+    const dayOfWeek = date.getDay(); // Chủ nhật = 0, Thứ hai = 1, ..., Thứ bảy = 6
+    const startDate = new Date(date);
+    startDate.setDate(date.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Lấy Thứ Hai đầu tuần
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 6); // Lấy Chủ Nhật cuối tuần
+    return { start: startDate, end: endDate };
   };
 
   const applyFilters = (currentFilters) => {
-    const filtered = schedule.filter(item => (
-      (currentFilters.className ? item.className.toLowerCase().includes(currentFilters.className.toLowerCase()) : true) &&
-      (currentFilters.date ? item.startTime.startsWith(currentFilters.date) : true)
-    ));
-    setFilteredSchedule(filtered);
+    const { start, end } = getWeekRange(currentFilters.date);
+    return schedule.filter(schedule => {
+      const vietnamDate = new Date(schedule.startTime);
+      vietnamDate.setHours(vietnamDate.getHours() + 7);
+      const dateOnly = vietnamDate.toISOString().split("T")[0];
+      return (
+        (dateOnly >= start.toISOString().split("T")[0] && dateOnly <= end.toISOString().split("T")[0])
+      );
+    });
   };
+
+  const filteredSchedule = Array.isArray(schedule)
+    ? schedule.map(report => ({
+      classId: report.classId,
+      className: report.classes.className,
+      tcId: report.tcId,
+      teacherName: report.classes.teacher.tcName,
+      startTime: report.startTime,
+      endTime: report.endTime,
+      scheduleStatus: report.scheduleStatus
+    })).filter(schedule => schedule.scheduleStatus === 1)
+    : [];
 
   return (
     <div className="schedule-container">
-      <StudentNavbar />
+      <div style={{ alignItems: "center", display: "flex" }}> <Navbar /></div>
       <div className='schedule-middle'>
         <div className='right-container'>
-          <div className="filter-container">
-            <select name="className" value={filters.className} onChange={handleFilterChange}>
-              <option value="">Tất cả lớp</option>
-              {studentClasses.map(cls => (
-                <option key={cls.classId} value={cls.className}>{cls.className}</option>
-              ))}
-            </select>
-            <input type="date" name="date" value={filters.date} onChange={handleFilterChange} />
+          <div></div>
+          <div className="container">
+            <div className="filter-container">
+              <div className="filter-Weekday">
+                <DatePicker selected={new Date(filters.date)} onChange={handleFilterChange} inline dateFormat="yyyy-MM-dd" className="custom-datepicker" />
+              </div>
+            </div>
           </div>
-        </div>
-        <Schedule schedule={filteredSchedule} />
+        </div> 
+      <Schedule schedule={filteredSchedule} />
       </div>
+
       <footer className="footer-container">
         <div className="footer-section">
           <h3>Quản lý trung tâm tiếng Anh</h3>
@@ -133,7 +142,8 @@ const TimeTable = () => {
           </ul>
         </div>
         <div className="footer-bottom">
-          <p>&copy; Bản quyền thuộc về Phùng Quang Trà | Cung cấp bởi Nhóm 1</p>
+          <p>© Bản quyền thuộc về Phùng Quang Trà
+            Cung cấp bởi Nhóm 1</p>
         </div>
       </footer>
     </div>

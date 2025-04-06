@@ -23,6 +23,7 @@ const LoginPage = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('role', data.role);
       localStorage.setItem('username', username);
+      localStorage.getItem('password', password); // Lưu mật khẩu vào localStorage (không an toàn, chỉ để tham khảo)
       // Chỉ lưu username ở đây
   
       alert(`Đăng nhập thành công! Vai trò: ${data.role}`);

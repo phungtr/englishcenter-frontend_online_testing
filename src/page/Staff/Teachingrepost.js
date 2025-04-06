@@ -4,6 +4,7 @@ import Schedule from '../../component/Calender';
 import Navbar from '../../component/Staffnavbar';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
+import * as XLSX from "xlsx";
 import { schedules, createSchedule } from '../../sevrice/Api';
 
 const TeachingScheduleReport = () => {
@@ -23,6 +24,13 @@ const TeachingScheduleReport = () => {
     endTime: "",
     scheduleStatus: "ACTIVE",
   });
+  const exportToExcel = () => {
+    const filteredSchedule = schedule.map(({ style, ...rest }) => rest);
+    const ws = XLSX.utils.json_to_sheet(filteredSchedule);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Schedule");
+    XLSX.writeFile(wb, "ThoiKhoaBieu.xlsx");
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prevForm) => {
@@ -53,15 +61,15 @@ const TeachingScheduleReport = () => {
     try {
       const { date, startTime, endTime, ...rest } = form;
       const creatorId = localStorage.getItem("aUid");
-  
+
       if (!creatorId) {
         alert("Lỗi: Không tìm thấy thông tin người tạo!");
         return;
       }
-  
+
       const startDateTime = new Date(`${date}T${startTime}:00.000Z`).toISOString();
       const endDateTime = new Date(`${date}T${endTime}:00.000Z`).toISOString();
-  
+
       await createSchedule({
         creatorId,
         startTime: startDateTime,
@@ -69,11 +77,11 @@ const TeachingScheduleReport = () => {
         jsonData: JSON.stringify({ key: "value" }),
         ...rest,
       });
-  
+
       alert("Tạo thời khóa biểu thành công!");
       setShowForm(false);
       setForm({ classId: "", tcId: "", date: "", startTime: "", endTime: "", scheduleStatus: "ACTIVE" });
-  
+
       await loadSchedule(); // Cập nhật lại danh sách sau khi thêm
     } catch (error) {
       alert("Lỗi khi tạo thời khóa biểu!");
@@ -121,16 +129,16 @@ const TeachingScheduleReport = () => {
   };
   const applyFilters = (currentFilters) => {
     const { start, end } = getWeekRange(currentFilters.date);
-  
+
     return schedule.filter(schedule => {
       const vietnamDate = new Date(schedule.startTime);
       vietnamDate.setHours(vietnamDate.getHours() + 7);
       const dateOnly = vietnamDate.toISOString().split("T")[0];
-  
+
       return (
         (currentFilters.lecturer ? schedule.teacherName.toLowerCase().includes(currentFilters.lecturer.toLowerCase()) : true) &&
         (currentFilters.course ? schedule.className.toLowerCase().includes(currentFilters.course.toLowerCase()) : true) &&
-        (dateOnly >= start.toISOString().split("T")[0] && dateOnly <= end.toISOString().split("T")[0]) && 
+        (dateOnly >= start.toISOString().split("T")[0] && dateOnly <= end.toISOString().split("T")[0]) &&
         (vietnamDate.getMonth() + 1 === currentFilters.month) &&
         (vietnamDate.getFullYear() === currentFilters.year)
       );
@@ -154,12 +162,14 @@ const TeachingScheduleReport = () => {
       <div style={{ alignItems: "center", display: "flex" }}>  <Navbar /></div>
       <div className='schedule-middle'>
         <div className='right-container'>
-        <div></div>
           <div className="container">
             <div className="container-open-form">
               <button onClick={() => setShowForm(true)} className="open-form-button">
                 Tạo thời khóa biểu
               </button>
+              <div className="button-container" >
+                <button onClick={exportToExcel} className="export-button">Xuất Excel</button>
+              </div>
             </div>
 
             {showForm && (
@@ -168,8 +178,8 @@ const TeachingScheduleReport = () => {
                   <h2>Thêm thời khóa biểu</h2>
                   <form onSubmit={handleSubmit}>
                     <input type="date" name="date" placeholder="Ngày" value={form.date} onChange={handleChange} required className="input-field" />
-                    <input type="time" name="startTime" placeholder="Giờ bắt đầu"  value={form.startTime} onChange={handleChange} required className="input-field" />
-                    <input type="time" name="endTime" placeholder="Giờ kết thúc"  value={form.endTime} onChange={handleChange} required className="input-field" />
+                    <input type="time" name="startTime" placeholder="Giờ bắt đầu" value={form.startTime} onChange={handleChange} required className="input-field" />
+                    <input type="time" name="endTime" placeholder="Giờ kết thúc" value={form.endTime} onChange={handleChange} required className="input-field" />
                     <input name="classId" placeholder="Mã lớp" value={form.classId} onChange={handleChange} required className="input-field" />
                     <input name="tcId" placeholder="Mã giáo viên" value={form.tcId} onChange={handleChange} required className="input-field" />
                     {error && <p className="error-message">{error}</p>}
@@ -181,12 +191,12 @@ const TeachingScheduleReport = () => {
             )}
           </div>
           <div className="filter-container">
-          <div className="filter-class">
-            <input type="text" name="lecturer" placeholder="Lọc theo giảng viên" value={filters.teacherName} onChange={handleFilterChange} />
-            <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.className} onChange={handleFilterChange} />
+            <div className="filter-class">
+              <input type="text" name="lecturer" placeholder="Lọc theo giảng viên" value={filters.teacherName} onChange={handleFilterChange} />
+              <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.className} onChange={handleFilterChange} />
             </div>
             <div className="filter-Weekday">
-            <DatePicker selected={new Date(filters.date)} onChange={handleFilterChange} inline dateFormat="yyyy-MM-dd"  className="custom-datepicker"/>
+              <DatePicker selected={new Date(filters.date)} onChange={handleFilterChange} inline dateFormat="yyyy-MM-dd" className="custom-datepicker" />
             </div>
           </div>
         </div>

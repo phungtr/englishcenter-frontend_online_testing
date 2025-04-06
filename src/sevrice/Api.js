@@ -69,6 +69,25 @@ export const createSchedule = async (scheduleData) => {
     throw error;
   }
 };
+export const ScheduleStudent = async (svId) => {
+  try {
+    const response = await api.get(`/schedule/student/${svId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy thời khóa biểu của học sinh:", error);
+    throw error;
+  }
+};
+
+export const ScheduleTeacher = async (tcId) => {
+  try {
+    const response = await api.get(`/schedule/teacher/${tcId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy thời khóa biểu của giáo viên:", error);
+    throw error;
+  }
+};
 export const addStudentToClass = async (studentData) => {
   try {
     const response = await api.post('/learning-progress/addStudent', studentData);
