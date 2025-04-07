@@ -5,15 +5,9 @@ import { useNavigate } from 'react-router-dom';
 const Navbar = () => {
   const navigate = useNavigate();
 
-  // const [role, setRole] = useState('');
-
-  // useEffect(() => {
-  //   const storedRole = localStorage.getItem('role');
-  //   setRole(storedRole);
-  // }, []);
-
   const handleLogout = () => {
     alert('Đăng xuất thành công!');
+    localStorage.clear();
     navigate('/');
   };
   return (

@@ -8,6 +8,7 @@ const TeacherNavbar = () => {
 
   const handleLogout = () => {
     alert('Đăng xuất thành công!');
+    localStorage.clear();
     navigate('/');
   };
 

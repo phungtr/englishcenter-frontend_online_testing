@@ -96,8 +96,8 @@ const ClassManagement = () => {
         <div className="class-management-control">
           <h2 style={{ fontSize: "30px" }}>Quản lý Lớp Học</h2>
           <div className="control-first">
-            <input type="text" placeholder="Tìm kiếm lớp..." value={searchClass} onChange={(e) => setSearchClass(e.target.value)} />
-            <select value={activeStatus} onChange={(e) => setActiveStatus(e.target.value)}>
+            <input style={{width:"300px"}} type="text" placeholder="Tìm kiếm lớp..." value={searchClass} onChange={(e) => setSearchClass(e.target.value)} />
+            <select  style={{width:"300px"}} value={activeStatus} onChange={(e) => setActiveStatus(e.target.value)}>
               <option value="">Tất cả trạng thái</option>
               <option value="1">Hoạt động</option>
               <option value="0">Không hoạt động</option>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/style/TeachingScheduleReport.css';
-import Schedule from '../../component/Calender';
 import StudentNavbar from '../../component/StudentNavbar';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ScheduleStudent, getAllAccounts, getAllStudents } from '../../sevrice/Api';
+import Schedulestudent from '../../component/StudentTime';
 
 const TimeTable = () => {
   const [schedule, setSchedule] = useState([]);
@@ -91,17 +91,16 @@ const TimeTable = () => {
     });
   };
 
-  const filteredSchedule = Array.isArray(schedule)
-    ? schedule.map(report => ({
+const filteredSchedule = Array.isArray(schedule)
+  ? schedule.map(report => ({
       classId: report.classId,
       className: report.className,
       tcId: report.tcId,
       teacherName: report.tcName,
       startTime: report.startTime,
       endTime: report.endTime,
-      scheduleStatus: report.scheduleStatus
-    })).filter(schedule => schedule.scheduleStatus === 1)
-    : [];
+    }))
+  : [];
 
   return (
     <div className="schedule-container">
@@ -117,7 +116,7 @@ const TimeTable = () => {
             </div>
           </div>
         </div> 
-      <Schedule schedule={filteredSchedule} />
+      <Schedulestudent schedule={filteredSchedule} />
       </div>
 
       <footer className="footer-container">

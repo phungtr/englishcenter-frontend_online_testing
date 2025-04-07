@@ -1,10 +1,12 @@
 
 import React, { useState, useEffect } from "react";
-import { getAllStudents, getAllTeachers, createStudent, createTeacher, updateStudent, updateTeacher, getAllAccounts, createAccount } from "../../sevrice/Api";
+import { getAllStudents, getAllTeachers, createStudent, createTeacher, updateStudent, updateTeacher, getAllAccounts, createAccount, deleteTeacherById, deleteStudentById } from "../../sevrice/Api";
 import Navbar from "../../component/Staffnavbar";
 import "../../style/style/UserManagement.css"
+
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [editingUser, setEditingUser] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -12,9 +14,14 @@ const UserManagement = () => {
   const [suggestedNames, setSuggestedNames] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const toggleModal = () => setIsOpen(!isOpen);
-  const sortedUsers = [...users].sort((a, b) => (a.role === "TEACHER" ? -1 : 1));
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchTerm) ||
+    user.email.toLowerCase().includes(searchTerm)
+  );
+  const sortedUsers = [...filteredUsers].sort((a, b) => (a.role === "TEACHER" ? -1 : 1));
   const totalPages = Math.ceil(sortedUsers.length / itemsPerPage);
   const paginatedUsers = sortedUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   const [formData, setFormData] = useState({
     aUid: "",
     aPwd: "",
@@ -45,6 +52,21 @@ const UserManagement = () => {
       address: "",  // Chỉ dành cho STUDENT
       fbUrl: "http://facebook.com/default",  // Chỉ dành cho STUDENT
     });
+  };
+  const handleDeleteUser = async (userId, role) => {
+    try {
+      if (role === "TEACHER") {
+        await deleteTeacherById(userId);
+      } else if (role === "STUDENT") {
+        await deleteStudentById(userId);
+      }
+      setUsers(users.filter(user => user.id !== userId));
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
   };
 
   const handleRoleChange = (e) => {
@@ -283,6 +305,16 @@ const UserManagement = () => {
         <div className="user-container">
           <div className="User-infor" >
             <h2 className="user-title">Quản lý người dùng</h2>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <input
+                type="text"
+                placeholder="Tìm kiếm theo tên hoặc email"
+                value={searchTerm}
+                onChange={handleSearch}
+                style={{ width: "300px", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+              />
+              <button className="btn-create" style={{ width: "200px" }} onClick={toggleModal}>Tạo tài khoản</button>
+            </div>
             <table className="user-table">
               <thead>
                 <tr>
@@ -300,10 +332,10 @@ const UserManagement = () => {
                     <td>{user.email}</td>
                     <td>
                       <button className="edit-button" onClick={() => showModal(user)}>Sửa</button>
+                      <button onClick={() => handleDeleteUser(user.id, user.role)}>Delete</button>
                     </td>
                   </tr>
                 ))}
-
               </tbody>
             </table>
             {totalPages > 1 && (
@@ -330,7 +362,6 @@ const UserManagement = () => {
             <button className="export" onClick={toggleForm}>
               {showForm ? "Đóng form" : "Thêm người dùng"}
             </button>
-            <button className="btn-create" onClick={toggleModal}>Tạo tài khoản</button>
           </div>
         </div>
 

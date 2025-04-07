@@ -200,8 +200,6 @@ const TeachingScheduleReport = () => {
             </div>
           </div>
         </div>
-
-        {/* Phai truyen props sang de loc */}
         <Schedule schedule={filteredSchedule} />
       </div>
       {/* Footer */}

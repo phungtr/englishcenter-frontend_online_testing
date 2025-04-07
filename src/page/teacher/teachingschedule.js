@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/style/TeachingScheduleReport.css';
-import Schedule from '../../component/Calender';
+import Scheduleteacher from '../../component/TeacherTime';
 import TeacherNavbar from '../../component/Teachernavbar';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -92,16 +92,15 @@ const TeachingSchedule = () => {
   };
 
   const filteredSchedule = Array.isArray(schedule)
-    ? schedule.map(report => ({
+  ? schedule.map(report => ({
       scheduleId: report.scheduleId,
       classId: report.classId,
       className: report.className,
       startTime: report.startTime,
       endTime: report.endTime,
-      classDescription: report.classDescription,
-      scheduleStatus: report.scheduleStatus
-    })).filter(schedule => schedule.scheduleStatus === 1)
-    : [];
+      classDescription: report.classDescription
+    }))
+  : [];
 
   return (
     <div className="schedule-container">
@@ -116,7 +115,7 @@ const TeachingSchedule = () => {
             </div>
           </div>
         </div>
-        <Schedule schedule={filteredSchedule} />
+        <Scheduleteacher schedule={filteredSchedule} />
       </div>
 
       <footer className="footer-container">

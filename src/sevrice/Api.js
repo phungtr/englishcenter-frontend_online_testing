@@ -177,6 +177,25 @@ export const updateStudent = async (svId, updatedData) => {
     throw error;
   }
 };
+export const deleteTeacherById = async (tcId) => {
+  try {
+    const response = await api.delete(`/delete/${tcId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting teacher:', error);
+    throw error;
+  }
+};
+export const deleteStudentById = async (svId) => {
+  try {
+    const response = await api.delete(`/delete/${svId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    throw error;
+  }
+};
+
 export const marks = async () =>{
   try {
     const response = await api.get(`/marks/all`);
@@ -198,4 +217,102 @@ export const getMarksBystudentId = async (studentId) => {
 export const updateStudentMark = async (studentId, markDto) => {
   const response = await api.put(`/mark/student/update/${studentId}`, markDto);
   return response.data;
+};
+export const createLesson = async (lessonDTO) => {
+  try {
+    const response = await api.post('/lessons', lessonDTO);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi tạo bài học:', error);
+    throw error;
+  }
+};
+
+export const getLessonById = async (id) => {
+  try {
+    const response = await api.get(`/lessons/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy bài học theo ID:', error);
+    throw error;
+  }
+};
+
+export const getAllLessons = async () => {
+  try {
+    const response = await api.get('/lessons');
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy tất cả bài học:', error);
+    throw error;
+  }
+};
+
+export const updateLesson = async (id, lessonDTO) => {
+  try {
+    const response = await api.put(`/lessons/${id}`, lessonDTO);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi cập nhật bài học:', error);
+    throw error;
+  }
+};
+
+export const deleteLesson = async (id) => {
+  try {
+    await api.delete(`/lessons/${id}`);
+  } catch (error) {
+    console.error('Lỗi khi xóa bài học:', error);
+    throw error;
+  }
+};
+
+// Teaching Content API
+export const createTeachingContent = async (teachingContentDTO) => {
+  try {
+    const response = await api.post('/teaching-contents', teachingContentDTO);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi tạo nội dung giảng dạy:', error);
+    throw error;
+  }
+};
+
+export const getTeachingContentById = async (id) => {
+  try {
+    const response = await api.get(`/teaching-contents/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy nội dung giảng dạy theo ID:', error);
+    throw error;
+  }
+};
+
+export const getAllTeachingContents = async () => {
+  try {
+    const response = await api.get('/teaching-contents');
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy tất cả nội dung giảng dạy:', error);
+    throw error;
+  }
+};
+
+export const updateTeachingContent = async (id, teachingContentDTO) => {
+  try {
+    const response = await api.put(`/teaching-contents/${id}`, teachingContentDTO);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi cập nhật nội dung giảng dạy:', error);
+    throw error;
+  }
+};
+
+export const deleteTeachingContent = async (id) => {
+  try {
+    await api.delete(`/teaching-contents/${id}`);
+  } catch (error) {
+    console.error('Lỗi khi xóa nội dung giảng dạy:', error);
+    throw error;
+  }
 };
