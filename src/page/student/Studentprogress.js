@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getAllAccounts, getAllStudents, getMarksBystudentId, getMyClasses } from "../../sevrice/Api";
-import "../../style/style/studentprogress.css"; // Import your CSS file
+import "../../style/style/Studentprogress.css"; // Import your CSS file
 import StudentNavbar from "../../component/StudentNavbar";
 const StudentProgress = () => {
   const [studentInfo, setStudentInfo] = useState(null);

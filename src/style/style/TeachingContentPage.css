@@ -1,0 +1,91 @@
+.teaching-content-page{
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  display: flex;
+  background-color: wheat;
+  background-image: url("../../style/acess/english-backhrod.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  gap: 10px;
+  overflow-x: hidden;
+  width: 100%;
+}
+.teaching-content-middermidder{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.teaching-container {
+  max-width: 800px;
+  /* margin: auto; */
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  margin: 1%;
+  background: white;
+  padding: 45px;
+  border-radius: 20px;
+}
+
+.heading {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.section select,
+.form input,
+.form textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+}
+
+.card a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.card a:hover {
+  text-decoration: underline;
+}
+
+.form button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form button:hover {
+  background-color: #0056b3;
+}

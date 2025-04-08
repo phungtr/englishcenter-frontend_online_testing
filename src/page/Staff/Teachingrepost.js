@@ -132,24 +132,33 @@ const TeachingScheduleReport = () => {
   
   const applyFilters = (currentFilters) => {
     const { start, end } = getWeekRange(currentFilters.date);
-    return schedule.filter(item => {
-      const startDate = new Date(item.startTime);
-      startDate.setHours(startDate.getHours() + 7);
-      const dateOnly = startDate.toISOString().split("T")[0];
+
+    return schedule.filter(schedule => {
+      const vietnamDate = new Date(schedule.startTime);
+      vietnamDate.setHours(vietnamDate.getHours() + 7);
+      const dateOnly = vietnamDate.toISOString().split("T")[0];
+
       return (
-        dateOnly >= start.toISOString().split("T")[0] &&
-        dateOnly <= end.toISOString().split("T")[0]
+        (currentFilters.lecturer ? schedule.teacherName.toLowerCase().includes(currentFilters.lecturer.toLowerCase()) : true) &&
+        (currentFilters.course ? schedule.className.toLowerCase().includes(currentFilters.course.toLowerCase()) : true) &&
+        (dateOnly >= start.toISOString().split("T")[0] && dateOnly <= end.toISOString().split("T")[0]) &&
+        (vietnamDate.getMonth() + 1 === currentFilters.month) &&
+        (vietnamDate.getFullYear() === currentFilters.year)
       );
     });
   };
-  const filteredSchedule = applyFilters(filters).filter(report => report.scheduleStatus === 1).map(report => ({
-    classId: report.classId,
-    className: report.className,
-    tcId: report.tcId,
-    teacherName: report.teacherName,
-    startTime: report.startTime,
-    endTime: report.endTime,
-  }));
+
+  const filteredSchedule = Array.isArray(schedule)
+    ? schedule.map(report => ({
+      classId: report.classId,
+      className: report.className,
+      tcId: report.tcId,
+      teacherName: report.teacherName,
+      startTime: report.startTime,
+      endTime: report.endTime,
+      scheduleStatus: report.scheduleStatus
+    })).filter(schedule => schedule.scheduleStatus === 1)
+    : [];
 
   return (
     <div className="schedule-container">
@@ -190,7 +199,13 @@ const TeachingScheduleReport = () => {
               <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.course} onChange={handleFilterChange} />
             </div>
             <div className="filter-Weekday">
-              <DatePicker  inline  selected={filters.date ? new Date(filters.date) : null} onChange={handleFilterChange} dateFormat="yyyy-MM-dd" className="custom-datepicker"/>
+              <DatePicker
+                inline
+                selected={filters.date ? new Date(filters.date) : null}
+                onChange={handleFilterChange}
+                dateFormat="yyyy-MM-dd"
+                className="custom-datepicker"
+              />
             </div>
           </div>
         </div>

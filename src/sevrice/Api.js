@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:80822/api'; // Thay đổi URL nếu cần
+const API_BASE_URL = 'http://localhost:8082/api'; // Thay đổi URL nếu cần
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -146,7 +146,17 @@ export const createTeacher = async (teacherData) => {
     throw error;
   }
 };
-
+export const getMyClasses = async (studentId) => {
+  try {
+    const response = await api.get(`/classes/my-classes`, {
+      params: { studentId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách lớp:', error);
+    throw error;
+  }
+};
 // Cập nhật giáo viên theo ID
 export const updateTeacher = async (tcId, updatedData) => {
   try {
@@ -272,51 +282,44 @@ export const deleteLesson = async (id) => {
 };
 
 // Teaching Content API
-export const createTeachingContent = async (teachingContentDTO) => {
+export const getAllTeachingContent = async () => {
   try {
-    const response = await api.post('/teaching-contents', teachingContentDTO);
+    const response = await api.get('/teaching-content/getAll');
     return response.data;
   } catch (error) {
-    console.error('Lỗi khi tạo nội dung giảng dạy:', error);
+    console.error('Lỗi khi lấy toàn bộ nội dung giảng dạy:', error);
     throw error;
   }
 };
 
-export const getTeachingContentById = async (id) => {
+export const getTeachingContentByClassId = async (classId) => {
   try {
-    const response = await api.get(`/teaching-contents/${id}`);
+    const response = await api.get(`/teaching-content/getAllByClassId/${classId}`);
     return response.data;
   } catch (error) {
-    console.error('Lỗi khi lấy nội dung giảng dạy theo ID:', error);
+    console.error(`Lỗi khi lấy nội dung giảng dạy theo lớp ${classId}:`, error);
     throw error;
   }
 };
-
-export const getAllTeachingContents = async () => {
+export const createTeachingContentWithUpload = async (data) => {
   try {
-    const response = await api.get('/teaching-contents');
+    const formData = new FormData();
+    formData.append('file', data.file); // File dạng Blob/File
+    formData.append('classId', data.classId);
+    formData.append('teacherId', data.teacherId);
+    formData.append('lessonId', data.lessonId);
+    formData.append('title', data.title);
+    formData.append('content', data.content);
+
+    const response = await api.post('/teaching-content/create-with-upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
     return response.data;
   } catch (error) {
-    console.error('Lỗi khi lấy tất cả nội dung giảng dạy:', error);
-    throw error;
-  }
-};
-
-export const updateTeachingContent = async (id, teachingContentDTO) => {
-  try {
-    const response = await api.put(`/teaching-contents/${id}`, teachingContentDTO);
-    return response.data;
-  } catch (error) {
-    console.error('Lỗi khi cập nhật nội dung giảng dạy:', error);
-    throw error;
-  }
-};
-
-export const deleteTeachingContent = async (id) => {
-  try {
-    await api.delete(`/teaching-contents/${id}`);
-  } catch (error) {
-    console.error('Lỗi khi xóa nội dung giảng dạy:', error);
+    console.error('Lỗi khi tạo nội dung giảng dạy kèm upload:', error);
     throw error;
   }
 };

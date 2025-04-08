@@ -11,7 +11,7 @@ const TimeTable = () => {
   const [filters, setFilters] = useState({
     date: new Date().toISOString().split("T")[0],
     month: new Date().getMonth() + 1,
-    year: new Date().getFullYear() // Lấy ngày hiện tại theo YYYY-MM-DD
+    year: new Date().getFullYear()
   });
 
   const loadSchedule = async () => {
@@ -94,14 +94,16 @@ const TimeTable = () => {
     });
   };
 
-  const filteredSchedule = applyFilters(filters).map(report => ({
-    classId: report.classId,
-    className: report.className,
-    tcId: report.tcId,
-    teacherName: report.tcName,
-    startTime: report.startTime,
-    endTime: report.endTime,
-  }));
+const filteredSchedule = Array.isArray(schedule)
+  ? schedule.map(report => ({
+      classId: report.classId,
+      className: report.className,
+      tcId: report.tcId,
+      teacherName: report.tcName,
+      startTime: report.startTime,
+      endTime: report.endTime,
+    }))
+  : [];
 
   return (
     <div className="schedule-container">

@@ -94,14 +94,16 @@ const TeachingSchedule = () => {
     });
   };
 
-  const filteredSchedule = applyFilters(filters).map(report => ({
-    classId: report.classId,
-    className: report.className,
-    tcId: report.tcId,
-    teacherName: report.tcName,
-    startTime: report.startTime,
-    endTime: report.endTime,
-  }));
+  const filteredSchedule = Array.isArray(schedule)
+  ? schedule.map(report => ({
+      scheduleId: report.scheduleId,
+      classId: report.classId,
+      className: report.className,
+      startTime: report.startTime,
+      endTime: report.endTime,
+      classDescription: report.classDescription
+    }))
+  : [];
 
   return (
     <div className="schedule-container">

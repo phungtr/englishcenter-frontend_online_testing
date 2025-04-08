@@ -69,7 +69,6 @@ const Statistics = () => {
       <Navbar />
       <div className="statistics-container">
         <h2>Thống kê</h2>
-
         <div className="filters">
           <input type="text" placeholder="Tìm kiếm theo tên..." value={search} onChange={(e) => setSearch(e.target.value)} />
           <select value={filterTeacher} onChange={(e) => setFilterTeacher(e.target.value)}>
@@ -81,7 +80,6 @@ const Statistics = () => {
             {uniqueClasses.map((className) => <option key={className} value={className}>{className}</option>)}
           </select>
         </div>
-
         <table>
           <thead>
             <tr>

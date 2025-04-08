@@ -12,6 +12,9 @@ import TeachingSchedule from './page/teacher/teachingschedule'
 import TimeTable from './page/student/timetable';
 import ClassManagement from './page/Staff/ClassManagement'
 import StudentClassPage from './page/teacher/teacherscore';
+import TeachingContentPage from './page/teacher/teachercontent';
+import StudentTeachingPage from './page/student/Studentcontent';
+import StudentProgress from './page/student/Studentprogress';
 // import ReportStatistics from './page/Dasboard';
 function App() {
 
@@ -29,6 +32,9 @@ function App() {
         <Route path='/student-schedule' element={<TimeTable/>}/>
         <Route path='/class-management' element= {<ClassManagement/>}/>
         <Route path='/teacher-students' element={<StudentClassPage/>}/>
+        <Route path='/teacher-respo' element={<TeachingContentPage/>}/>
+        <Route path='/student-courses' element={<StudentTeachingPage />}/>
+        <Route path='/student-grades' element={<StudentProgress/>}/>
       </Routes>
     </BrowserRouter> 
   );

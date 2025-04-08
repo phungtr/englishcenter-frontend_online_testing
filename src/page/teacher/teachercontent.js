@@ -1,153 +1,180 @@
-import React, { useState, useEffect } from 'react';
-import { getAllClasses, getAllLessons, getAllTeachingContents, createTeachingContent, updateTeachingContent, deleteTeachingContent } from './api'; // Import API functions
-import './TeachingContentPage.css'; // Import CSS for styling
-
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable react/jsx-no-comment-textnodes */
+import React, { useEffect, useState } from 'react';
+import {
+  getAllAccounts,
+  getAllTeachers,
+  getAllClasses,
+  getTeachingContentByClassId,
+  createTeachingContentWithUpload
+} from '../../sevrice/Api'; // chỉnh lại đường dẫn nếu cần
+import '../../style/style/TeachingContentPage.css'; // CSS riêng
+import TeacherNavbar from '../../component/Teachernavbar'; // chỉnh lại đường dẫn nếu cần
 const TeachingContentPage = () => {
+  const [teacherId, setTeacherId] = useState('');
   const [classes, setClasses] = useState([]);
-  const [selectedClass, setSelectedClass] = useState('');
-  const [lessons, setLessons] = useState([]);
-  const [selectedLesson, setSelectedLesson] = useState('');
+  const [selectedClassId, setSelectedClassId] = useState('');
   const [contents, setContents] = useState([]);
-  const [newContent, setNewContent] = useState({ format: '', file: null });
-  const [editContent, setEditContent] = useState(null);
-  const [selectedContents, setSelectedContents] = useState([]);
+  const [formData, setFormData] = useState({
+    classId: '',
+    lessonId: '',
+    title: '',
+    content: '',
+    file: null,
+  });
 
   useEffect(() => {
-    // Fetch classes
-    getAllClasses().then(setClasses);
+    const fetchData = async () => {
+      try {
+        const username = localStorage.getItem('username');
+        const accounts = await getAllAccounts();
+        const account = accounts.find(acc => acc.username === username);
+        const aUid = account?.aId;
+
+        const teachers = await getAllTeachers();
+        const teacher = teachers.find(t => t.accountId === aUid);
+        const teacherId = teacher?.teacherId;
+        setTeacherId(teacherId);
+
+        const classes = await getAllClasses();
+        setClasses(classes);
+      } catch (error) {
+        console.error('Lỗi khi tải dữ liệu ban đầu:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    if (selectedClass) {
-      getAllLessons().then(setLessons);
-    }
-  }, [selectedClass]);
-
-  useEffect(() => {
-    if (selectedLesson) {
-      // Fetch contents for selected lesson
-      getAllTeachingContents().then(setContents);
-    }
-  }, [selectedLesson]);
-
-  const handleUpload = async () => {
-    try {
-      const formData = new FormData();
-      formData.append('file', newContent.file);
-
-      // Upload file
-      const fileResponse = await axios.post('/api/upload', formData);
-      const filePath = fileResponse.data;
-
-      // Lưu metadata
-      const teachingContentDTO = {
-        format: newContent.format,
-        filepath: filePath,
-        classId: selectedClass,
-        lessonId: selectedLesson,
-        // Các trường khác
-      };
-      const newContentResponse = await createTeachingContent(teachingContentDTO);
-      setContents([...contents, newContentResponse]);
-      setNewContent({ format: '', file: null });
-    } catch (error) {
-      console.error('Lỗi khi upload tài liệu:', error);
-    }
+  const handleClassSelect = async (classId) => {
+    setSelectedClassId(classId);
+    const data = await getTeachingContentByClassId(classId);
+    const filtered = data.filter(item => item.teacherId === teacherId);
+    setContents(filtered);
   };
 
-  const handleEdit = async () => {
-    try {
-      const formData = new FormData();
-      formData.append('file', editContent.file);
-
-      // Upload file mới nếu có
-      const fileResponse = await axios.post('/api/upload', formData);
-      const filePath = fileResponse.data;
-
-      // Cập nhật metadata
-      const teachingContentDTO = {
-        format: editContent.format,
-        filepath: filePath,
-        classId: selectedClass,
-        lessonId: selectedLesson,
-        // Các trường khác
-      };
-      const updatedContentResponse = await updateTeachingContent(editContent.id, teachingContentDTO);
-      setContents(contents.map(content => (content.id === updatedContentResponse.id ? updatedContentResponse : content)));
-      setEditContent(null);
-    } catch (error) {
-      console.error('Lỗi khi cập nhật tài liệu:', error);
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleDelete = async () => {
+  const handleFileChange = (e) => {
+    setFormData(prev => ({ ...prev, file: e.target.files[0] }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      selectedContents.forEach(async contentId => {
-        await deleteTeachingContent(contentId);
-        setContents(contents.filter(content => content.id !== contentId));
+      await createTeachingContentWithUpload({
+        ...formData,
+        teacherId
       });
-      setSelectedContents([]);
+      alert('Tạo bài giảng thành công!');
+      handleClassSelect(formData.classId); // refresh list
     } catch (error) {
-      console.error('Lỗi khi xóa tài liệu:', error);
+      alert('Tạo thất bại!');
     }
   };
 
   return (
     <div className="teaching-content-page">
-      <h1>Kho bài giảng</h1>
-      <select onChange={(e) => setSelectedClass(e.target.value)}>
-        <option value="">Chọn lớp</option>
-        {classes.map(cls => <option key={cls.id} value={cls.id}>{cls.name}</option>)}
-      </select>
-      {selectedClass && (
-        <select onChange={(e) => setSelectedLesson(e.target.value)}>
-          <option value="">Chọn bài học</option>
-          {lessons.map(lesson => <option key={lesson.id} value={lesson.id}>{lesson.name}</option>)}
+    <TeacherNavbar/>.
+    <div className="teaching-content-middermidder">
+    <div className="teaching-container">
+      <h2 className="heading">Quản lý bài giảng</h2>
+
+      <div className="section">
+        <label>Chọn lớp:</label>
+        <select onChange={(e) => handleClassSelect(e.target.value)}>
+          <option value="">-- Chọn lớp --</option>
+          {classes.map(cls => (
+            <option key={cls.classId} value={cls.classId}>
+              {cls.className}
+            </option>
+          ))}
         </select>
-      )}
-      <ul>
-        {contents.map(content => (
-          <li key={content.id}>
-            <input
-              type="checkbox"
-              checked={selectedContents.includes(content.id)}
-              onChange={(e) => {
-                if (e.target.checked) {
-                  setSelectedContents([...selectedContents, content.id]);
-                } else {
-                  setSelectedContents(selectedContents.filter(id => id !== content.id));
-                }
-              }}
-            />
-            {content.title}
-            <button onClick={() => setEditContent(content)}>Sửa</button>
-          </li>
-        ))}
-      </ul>
-      <button onClick={handleDelete}>Xóa</button>
-      <div>
-        <h2>Thêm tài liệu</h2>
-        <select onChange={(e) => setNewContent({ ...newContent, format: e.target.value })}>
-          <option value="">Chọn định dạng</option>
-          <option value="PDF">PDF</option>
-          <option value="DOCX">DOCX</option>
-          <option value="PPT">PPT</option>
-        </select>
-        <input type="file" onChange={(e) => setNewContent({ ...newContent, file: e.target.files[0] })} />
-        <button onClick={handleUpload}>Xác nhận</button>
       </div>
-      {editContent && (
-        <div>
-          <h2>Sửa tài liệu</h2>
-          <select value={editContent.format} onChange={(e) => setEditContent({ ...editContent, format: e.target.value })}>
-            <option value="PDF">PDF</option>
-            <option value="DOCX">DOCX</option>
-            <option value="PPT">PPT</option>
+
+      <div className="section">
+        <h3>Danh sách tài liệu:</h3>
+        {contents.map(content => (
+          <div key={content.id} className="card">
+            <p><strong>Tiêu đề:</strong> {content.title}</p>
+            <p><strong>Nội dung:</strong> {content.content}</p>
+            <a
+              href={`/${content.filepath.replace(/\\/g, '/')}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Xem file
+            </a>
+          </div>
+        ))}
+      </div>
+
+      <div className="section">
+        <h3>cập nhập tài liệu mới:</h3>
+        <form onSubmit={handleSubmit} className="form">
+        <select name="classId" onChange={handleInputChange} required value={formData.classId || selectedClassId}>
+            <option value="">-- Chọn lớp --</option>
+            {classes.map(cls => (
+              <option key={cls.classId} value={cls.classId}>
+                {cls.className}
+              </option>
+            ))}
           </select>
-          <input type="file" onChange={(e) => setEditContent({ ...editContent, file: e.target.files[0] })} />
-          <button onClick={handleEdit}>Sửa</button>
+          <input
+            type="text"
+            name="lessonId"
+            placeholder="Mã bài học"
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="text"
+            name="title"
+            placeholder="Tiêu đề"
+            onChange={handleInputChange}
+            required
+          />
+          <textarea
+            name="content"
+            placeholder="Nội dung bài giảng"
+            onChange={handleInputChange}
+            required
+          />
+          <input type="file" onChange={handleFileChange} required />
+          <button type="submit">Tạo bài giảng</button>
+        </form>
+      </div>
+    </div>
+    </div>
+    <footer className="footer-container">
+        <div className="footer-section">
+          <h3>Quản lý trung tâm tiếng Anh</h3>
+          <p>Hệ thống quản lý hiện đại và tiện lợi</p>
         </div>
-      )}
+        <div className="footer-section">
+          <h4>Bạn cần hỗ trợ</h4>
+          <p>0867 460 906</p>
+          <p>Địa chỉ: Hà Đông, Hà Nội, Việt Nam</p>
+          <p>Email: phungtra@gmail.com</p>
+        </div>
+        <div className="footer-section">
+          <h4>Hỗ trợ khách hàng</h4>
+          <ul>
+            <li><a href="/">Trang chủ</a></li>
+            <li><a href="/about">Giới thiệu</a></li>
+            <li><a href="/categories">Danh mục</a></li>
+            <li><a href="/news">Tin tức</a></li>
+            <li><a href="/help">Hướng dẫn sử dụng</a></li>
+          </ul>
+        </div>
+        <div className="footer-bottom">
+          <p>© Bản quyền thuộc về Phùng Quang Trà
+            Cung cấp bởi Nhóm 1</p>
+        </div>
+      </footer>
     </div>
   );
 };
