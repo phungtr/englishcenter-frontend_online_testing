@@ -33,7 +33,7 @@ const TeachingContentPage = () => {
 
         const teachers = await getAllTeachers();
         const teacher = teachers.find(t => t.accountId === aUid);
-        const teacherId = teacher?.teacherId;
+        const teacherId = teacher?.tcId; 
         setTeacherId(teacherId);
 
         const classes = await getAllClasses();
