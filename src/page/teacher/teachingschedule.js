@@ -9,7 +9,9 @@ import { ScheduleTeacher, getAllAccounts, getAllTeachers } from '../../sevrice/A
 const TeachingSchedule = () => {
   const [schedule, setSchedule] = useState([]);
   const [filters, setFilters] = useState({
-    date: new Date().toISOString().split("T")[0] // Lấy ngày hiện tại theo YYYY-MM-DD
+    date: new Date().toISOString().split("T")[0],
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear() 
   });
 
   const loadSchedule = async () => {
@@ -52,9 +54,10 @@ const TeachingSchedule = () => {
 
   const handleFilterChange = (e) => {
     if (e instanceof Date) {
-      // Nếu e là Date (từ DatePicker), cập nhật filters.date
+      const month = e.getMonth() + 1;
+      const year = e.getFullYear();
       setFilters((prev) => {
-        const updatedFilters = { ...prev, date: e.toISOString().split("T")[0] };
+        const updatedFilters = { ...prev, date: e.toISOString().split("T")[0], month, year };
         applyFilters(updatedFilters);
         return updatedFilters;
       });
@@ -91,16 +94,14 @@ const TeachingSchedule = () => {
     });
   };
 
-  const filteredSchedule = Array.isArray(schedule)
-  ? schedule.map(report => ({
-      scheduleId: report.scheduleId,
-      classId: report.classId,
-      className: report.className,
-      startTime: report.startTime,
-      endTime: report.endTime,
-      classDescription: report.classDescription
-    }))
-  : [];
+  const filteredSchedule = applyFilters(filters).map(report => ({
+    classId: report.classId,
+    className: report.className,
+    tcId: report.tcId,
+    teacherName: report.tcName,
+    startTime: report.startTime,
+    endTime: report.endTime,
+  }));
 
   return (
     <div className="schedule-container">
@@ -110,7 +111,7 @@ const TeachingSchedule = () => {
           <div className="container">
             <div className="filter-container">
               <div className="filter-Weekday">
-                <DatePicker selected={new Date(filters.date)} onChange={handleFilterChange} inline dateFormat="yyyy-MM-dd" className="custom-datepicker" />
+              <DatePicker  inline  selected={filters.date ? new Date(filters.date) : null} onChange={handleFilterChange} dateFormat="yyyy-MM-dd" className="custom-datepicker"/>
               </div>
             </div>
           </div>

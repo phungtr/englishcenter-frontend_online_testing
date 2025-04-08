@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8083/api'; // Thay đổi URL nếu cần
+const API_BASE_URL = 'http://localhost:80822/api'; // Thay đổi URL nếu cần
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -206,16 +206,20 @@ export const marks = async () =>{
   }
 };
 export const getMarksByClassId = async (classId) => {
-  const response = await api.get(`/mark/class/${classId}`);
+  const response = await api.get(`/marks/class/${classId}`);
   return response.data;
 };
 export const getMarksBystudentId = async (studentId) => {
-  const response = await api.get(`/mark/student/${studentId}`);
+  const response = await api.get(`/marks/student/${studentId}`);
+  return response.data;
+};
+export const updateMark = async (markId, markDto) => { 
+  const response = await api.put(`/marks/update/${markId}`, markDto); 
   return response.data;
 };
 // Cập nhật điểm và nhận xét học sinh
 export const updateStudentMark = async (studentId, markDto) => {
-  const response = await api.put(`/mark/student/update/${studentId}`, markDto);
+  const response = await api.put(`/marks/student/${studentId}`, markDto);
   return response.data;
 };
 export const createLesson = async (lessonDTO) => {

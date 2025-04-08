@@ -19,7 +19,6 @@ const TeachingContentPage = () => {
 
   useEffect(() => {
     if (selectedClass) {
-      // Fetch lessons for selected class
       getAllLessons().then(setLessons);
     }
   }, [selectedClass]);

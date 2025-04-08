@@ -12,7 +12,9 @@ const TeachingScheduleReport = () => {
   const [filters, setFilters] = useState({
     lecturer: "",
     course: "",
-    date: new Date().toISOString().split("T")[0] // Lấy ngày hiện tại theo YYYY-MM-DD
+    date: new Date().toISOString().split("T")[0],
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear()
   });
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -101,9 +103,10 @@ const TeachingScheduleReport = () => {
   }, []);
   const handleFilterChange = (e) => {
     if (e instanceof Date) {
-      // Nếu e là Date (từ DatePicker), cập nhật filters.date
+      const month = e.getMonth() + 1;
+      const year = e.getFullYear();
       setFilters((prev) => {
-        const updatedFilters = { ...prev, date: e.toISOString().split("T")[0] };
+        const updatedFilters = { ...prev, date: e.toISOString().split("T")[0], month, year };
         applyFilters(updatedFilters);
         return updatedFilters;
       });
@@ -119,43 +122,34 @@ const TeachingScheduleReport = () => {
   };
   const getWeekRange = (dateString) => {
     const date = new Date(dateString);
-    const dayOfWeek = date.getDay(); // Chủ nhật = 0, Thứ hai = 1, ..., Thứ bảy = 6
+    const dayOfWeek = date.getDay();
     const startDate = new Date(date);
-    startDate.setDate(date.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Lấy Thứ Hai đầu tuần
+    startDate.setDate(date.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
     const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 6); // Lấy Chủ Nhật cuối tuần
-
+    endDate.setDate(startDate.getDate() + 6);
     return { start: startDate, end: endDate };
   };
+  
   const applyFilters = (currentFilters) => {
     const { start, end } = getWeekRange(currentFilters.date);
-
-    return schedule.filter(schedule => {
-      const vietnamDate = new Date(schedule.startTime);
-      vietnamDate.setHours(vietnamDate.getHours() + 7);
-      const dateOnly = vietnamDate.toISOString().split("T")[0];
-
+    return schedule.filter(item => {
+      const startDate = new Date(item.startTime);
+      startDate.setHours(startDate.getHours() + 7);
+      const dateOnly = startDate.toISOString().split("T")[0];
       return (
-        (currentFilters.lecturer ? schedule.teacherName.toLowerCase().includes(currentFilters.lecturer.toLowerCase()) : true) &&
-        (currentFilters.course ? schedule.className.toLowerCase().includes(currentFilters.course.toLowerCase()) : true) &&
-        (dateOnly >= start.toISOString().split("T")[0] && dateOnly <= end.toISOString().split("T")[0]) &&
-        (vietnamDate.getMonth() + 1 === currentFilters.month) &&
-        (vietnamDate.getFullYear() === currentFilters.year)
+        dateOnly >= start.toISOString().split("T")[0] &&
+        dateOnly <= end.toISOString().split("T")[0]
       );
     });
   };
-
-  const filteredSchedule = Array.isArray(schedule)
-    ? schedule.map(report => ({
-      classId: report.classId,
-      className: report.className,
-      tcId: report.tcId,
-      teacherName: report.teacherName,
-      startTime: report.startTime,
-      endTime: report.endTime,
-      scheduleStatus: report.scheduleStatus
-    })).filter(schedule => schedule.scheduleStatus === 1)
-    : [];
+  const filteredSchedule = applyFilters(filters).filter(report => report.scheduleStatus === 1).map(report => ({
+    classId: report.classId,
+    className: report.className,
+    tcId: report.tcId,
+    teacherName: report.teacherName,
+    startTime: report.startTime,
+    endTime: report.endTime,
+  }));
 
   return (
     <div className="schedule-container">
@@ -192,11 +186,11 @@ const TeachingScheduleReport = () => {
           </div>
           <div className="filter-container">
             <div className="filter-class">
-              <input type="text" name="lecturer" placeholder="Lọc theo giảng viên" value={filters.teacherName} onChange={handleFilterChange} />
-              <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.className} onChange={handleFilterChange} />
+              <input type="text" name="lecturer" placeholder="Lọc theo giảng viên" value={filters.lecturer} onChange={handleFilterChange} />
+              <input type="text" name="course" placeholder="Lọc theo khóa học" value={filters.course} onChange={handleFilterChange} />
             </div>
             <div className="filter-Weekday">
-              <DatePicker selected={new Date(filters.date)} onChange={handleFilterChange} inline dateFormat="yyyy-MM-dd" className="custom-datepicker" />
+              <DatePicker  inline  selected={filters.date ? new Date(filters.date) : null} onChange={handleFilterChange} dateFormat="yyyy-MM-dd" className="custom-datepicker"/>
             </div>
           </div>
         </div>

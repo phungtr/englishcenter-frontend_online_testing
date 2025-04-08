@@ -6,7 +6,8 @@ const colors = ["#ffdddd", "#ddeeff", "#ddffdd", "#ffeeaa", "#e5ddff", "#f9f9f9"
 const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
 const Schedulestudent = ({ schedule }) => {
-  const colorMapRef = useRef({});
+
+  const colorMapRef = useRef({}); // Giữ nguyên map qua các lần render
 
   useEffect(() => {
     schedule.forEach((item) => {
@@ -30,7 +31,6 @@ const Schedulestudent = ({ schedule }) => {
     const [hour, minute] = time.split(":").map(Number);
     return ((hour - 7) * 60 + minute) * pxPerMinute;
   };
-
   const getDayIndex = (startTime) => {
     if (!startTime) return -1;
     const localDate = new Date(startTime);

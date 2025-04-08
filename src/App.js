@@ -11,6 +11,7 @@ import StudentHome from './page/Dasboards/Studenthome';
 import TeachingSchedule from './page/teacher/teachingschedule'
 import TimeTable from './page/student/timetable';
 import ClassManagement from './page/Staff/ClassManagement'
+import StudentClassPage from './page/teacher/teacherscore';
 // import ReportStatistics from './page/Dasboard';
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
         <Route path='/teacher-schedule' element={<TeachingSchedule/>}/>
         <Route path='/student-schedule' element={<TimeTable/>}/>
         <Route path='/class-management' element= {<ClassManagement/>}/>
+        <Route path='/teacher-students' element={<StudentClassPage/>}/>
       </Routes>
     </BrowserRouter> 
   );

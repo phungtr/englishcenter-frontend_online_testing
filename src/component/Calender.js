@@ -7,8 +7,8 @@ const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
 const Schedule = ({ schedule }) => {
 
-  // eslint-disable-next-line
   const colorMapRef = useRef({}); // Giữ nguyên map qua các lần render
+
   useEffect(() => {
     schedule.forEach((item) => {
       const key = item.className;
@@ -18,6 +18,7 @@ const Schedule = ({ schedule }) => {
     });
   }, [schedule]);
 
+
   const days = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"];
   const timeSlots = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00"];
   const pxPerMinute = 2;
@@ -26,17 +27,17 @@ const Schedule = ({ schedule }) => {
     if (!isoTime) return ""; // Trả về chuỗi rỗng nếu isoTime không có giá trị
     return isoTime.split("T")[1].substring(0, 5);
   };
+
   const timeToPosition = (time) => {
     const [hour, minute] = time.split(":").map(Number);
     return ((hour - 7) * 60 + minute) * pxPerMinute;
   };
 
+
   const getDayIndex = (startTime) => {
     if (!startTime) return -1;
-
     const localDate = new Date(startTime);
     const vietnamDate = new Date(localDate.toLocaleString("en-US", { timeZone: "Asia/Ho_Chi_Minh" }));
-
     const dayOfWeek = vietnamDate.getDay();
     return dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   };
@@ -66,7 +67,6 @@ const Schedule = ({ schedule }) => {
               </div>
             ))}
           </div>
-
           <div className="calendar">
             {schedule.map((schedule, index) => {
               const startTimeValue = extractTime(schedule?.startTime);
@@ -105,7 +105,6 @@ const Schedule = ({ schedule }) => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };
