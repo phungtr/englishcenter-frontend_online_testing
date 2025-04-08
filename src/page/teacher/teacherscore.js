@@ -1,8 +1,16 @@
 // StudentClassPage.jsx
 import React, { useEffect, useState } from 'react';
-import { getAllAccounts, getAllTeachers, getAllClasses, getAllStudentsInClass, getMarksByClassId, updateMark } from '../../sevrice/Api';
-import '../../style/style/teacherscore.css'; // Import CSS for styling
-import TeacherNavbar from '../../component/Teachernavbar'; // Import your navbar component
+import {
+  getAllAccounts,
+  getAllTeachers,
+  getAllClasses,
+  getAllStudentsInClass,
+  getMarksByClassId,
+  updateMark
+} from '../../sevrice/Api';
+import '../../style/style/teacherscore.css';
+import TeacherNavbar from '../../component/Teachernavbar';
+
 const StudentClassPage = () => {
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState(null);
@@ -13,42 +21,46 @@ const StudentClassPage = () => {
   const [originalMarks, setOriginalMarks] = useState({});
 
   useEffect(() => {
-    const loadTeacherClasses = async () => {
-      const username = localStorage.getItem('username');
-      const password = localStorage.getItem('password');
+    const loadData = async () => {
+      try {
+        const username = localStorage.getItem('username');
+        const password = localStorage.getItem('password');
+        const accounts = await getAllAccounts();
+        const account = accounts.find(acc => acc.aUid === username && acc.aPwd === password);
+        if (!account) return;
 
-      const accounts = await getAllAccounts();
-      const account = accounts.find(acc => acc.aUid === username && acc.aPwd === password);
-      if (!account) return;
+        const teachers = await getAllTeachers();
+        const teacher = teachers.find(tc => tc.aId === account.aId);
+        if (!teacher) return;
 
-      const teachers = await getAllTeachers();
-      const teacher = teachers.find(tc => tc.aId === account.aId);
-      if (!teacher) return;
-
-      const allClasses = await getAllClasses();
-      const filtered = allClasses.filter(cls => cls.teacher?.tcId === teacher.tcId);
-      setClasses(filtered);
+        const allClasses = await getAllClasses();
+        const filtered = allClasses.filter(cls => cls.teacher?.tcId === teacher.tcId);
+        setClasses(filtered);
+      } catch (error) {
+        console.error('Lỗi khi tải dữ liệu:', error);
+      }
     };
 
-    loadTeacherClasses();
+    loadData();
   }, []);
 
   const loadStudentsAndMarks = async (classId) => {
-    const studentList = await getAllStudentsInClass(classId);
-    const markList = await getMarksByClassId(classId);
-    setStudents(studentList);
-    setMarks(markList);
-    setSelectedClass(classId);
-    setCurrentIndex(0);
-    setEditedMarks({});
-    setOriginalMarks({});
+    try {
+      const studentList = await getAllStudentsInClass(classId);
+      const markList = await getMarksByClassId(classId);
+      setStudents(studentList);
+      setMarks(markList);
+      setSelectedClass(classId);
+      setCurrentIndex(0);
+      setEditedMarks({});
+      setOriginalMarks({});
+    } catch (error) {
+      console.error('Lỗi khi tải học sinh và điểm:', error);
+    }
   };
 
   const currentStudent = students[currentIndex];
-
-  const getStudentMark = (svId) => {
-    return marks.find(mark => mark.studentId === svId);
-  };
+  const getStudentMark = (svId) => marks.find(mark => mark.studentId === svId);
 
   const handleEdit = (studentId, value) => {
     setEditedMarks(prev => ({ ...prev, [studentId]: value }));
@@ -59,16 +71,12 @@ const StudentClassPage = () => {
   };
 
   const handleCancel = (studentId) => {
-    setEditedMarks(prev => {
-      const updated = { ...prev };
-      delete updated[studentId];
-      return updated;
-    });
-    setOriginalMarks(prev => {
-      const updated = { ...prev };
-      delete updated[studentId];
-      return updated;
-    });
+    const updatedEdited = { ...editedMarks };
+    const updatedOriginal = { ...originalMarks };
+    delete updatedEdited[studentId];
+    delete updatedOriginal[studentId];
+    setEditedMarks(updatedEdited);
+    setOriginalMarks(updatedOriginal);
   };
 
   const handleConfirm = async (studentId) => {
@@ -82,17 +90,20 @@ const StudentClassPage = () => {
       updatedDate: new Date().toISOString()
     };
 
-    await updateMark(mark.markId, updatedMark);
-
-    const updatedMarks = marks.map(m => m.markId === mark.markId ? updatedMark : m);
-    setMarks(updatedMarks);
-    handleCancel(studentId);
+    try {
+      await updateMark(mark.markId, updatedMark);
+      const updatedMarks = marks.map(m => m.markId === mark.markId ? updatedMark : m);
+      setMarks(updatedMarks);
+      handleCancel(studentId);
+    } catch (error) {
+      console.error('Lỗi khi cập nhật điểm:', error);
+    }
   };
 
   return (
     <div className='TeacherClassPage'>
-      <TeacherNavbar />.
-      <div style={{ padding: '20px', backgroundColor: '#fff', color: '#000', margin: '1%', height: '600px' }}>
+      <TeacherNavbar />
+      <div style={{ padding: '20px', backgroundColor: '#fff', margin: '1%', height: '600px' }}>
         <h2>Danh sách lớp bạn đang dạy</h2>
         {classes.map(cls => (
           <button
@@ -118,19 +129,17 @@ const StudentClassPage = () => {
                   <td style={cellStyle}>
                     <input
                       type="number"
-                      value={
-                        editedMarks[currentStudent.svId] ??
-                        getStudentMark(currentStudent.svId)?.point ??
-                        ''
-                      }
+                      min={0}
+                      max={100}
+                      step="0.1"
+                      value={editedMarks[currentStudent.svId] ?? getStudentMark(currentStudent.svId)?.point ?? ''}
                       onChange={(e) => handleEdit(currentStudent.svId, e.target.value)}
                       style={{ width: '80px' }}
                     />
-                    {editedMarks[currentStudent.svId] !== undefined && getStudentMark(currentStudent.svId) && (
+                    {editedMarks[currentStudent.svId] !== undefined &&
+                      editedMarks[currentStudent.svId] !== originalMarks[currentStudent.svId] && (
                       <>
-                        <span style={{ marginLeft: '10px' }}>
-                          {getStudentMark(currentStudent.svId).point}/100
-                        </span>
+                        <span style={{ marginLeft: '10px' }}>{getStudentMark(currentStudent.svId)?.point}/100</span>
                         <button
                           style={{ marginLeft: '10px', backgroundColor: 'green', color: 'white' }}
                           onClick={() => handleConfirm(currentStudent.svId)}
@@ -151,21 +160,11 @@ const StudentClassPage = () => {
             </table>
 
             <div style={{ marginTop: '20px' }}>
-              <button
-                disabled={currentIndex === 0}
-                onClick={() => setCurrentIndex(prev => prev - 1)}
-              >
-                ← Trước
-              </button>
+              <button disabled={currentIndex === 0} onClick={() => setCurrentIndex(i => i - 1)}>← Trước</button>
               <span style={{ margin: '0 10px' }}>
                 Học sinh {currentIndex + 1}/{students.length}
               </span>
-              <button
-                disabled={currentIndex === students.length - 1}
-                onClick={() => setCurrentIndex(prev => prev + 1)}
-              >
-                Sau →
-              </button>
+              <button disabled={currentIndex === students.length - 1} onClick={() => setCurrentIndex(i => i + 1)}>Sau →</button>
             </div>
           </div>
         )}
@@ -192,8 +191,7 @@ const StudentClassPage = () => {
           </ul>
         </div>
         <div className="footer-bottom">
-          <p>© Bản quyền thuộc về Phùng Quang Trà
-            Cung cấp bởi Nhóm 1</p>
+          <p>© Bản quyền thuộc về Phùng Quang Trà - Cung cấp bởi Nhóm 1</p>
         </div>
       </footer>
     </div>
