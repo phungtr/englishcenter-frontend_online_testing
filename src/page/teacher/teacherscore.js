@@ -71,33 +71,34 @@ const StudentClassPage = () => {
   };
 
   const handleCancel = (studentId) => {
-    const updatedEdited = { ...editedMarks };
-    const updatedOriginal = { ...originalMarks };
-    delete updatedEdited[studentId];
-    delete updatedOriginal[studentId];
-    setEditedMarks(updatedEdited);
-    setOriginalMarks(updatedOriginal);
+    setEditedMarks(prev => {
+      const updated = { ...prev };
+      delete updated[studentId];
+      return updated;
+    });
+    setOriginalMarks(prev => {
+      const updated = { ...prev };
+      delete updated[studentId];
+      return updated;
+    });
   };
-
+  
   const handleConfirm = async (studentId) => {
     const mark = getStudentMark(studentId);
     if (!mark) return;
-
+  
     const newPoint = editedMarks[studentId];
     const updatedMark = {
       ...mark,
       point: Number(newPoint),
       updatedDate: new Date().toISOString()
     };
-
-    try {
-      await updateMark(mark.markId, updatedMark);
-      const updatedMarks = marks.map(m => m.markId === mark.markId ? updatedMark : m);
-      setMarks(updatedMarks);
-      handleCancel(studentId);
-    } catch (error) {
-      console.error('Lỗi khi cập nhật điểm:', error);
-    }
+  
+    await updateMark(mark.markId, updatedMark);
+  
+    const updatedMarks = marks.map(m => m.markId === mark.markId ? updatedMark : m);
+    setMarks(updatedMarks);
+    handleCancel(studentId); 
   };
 
   return (
@@ -138,22 +139,25 @@ const StudentClassPage = () => {
                     />
                     {editedMarks[currentStudent.svId] !== undefined &&
                       editedMarks[currentStudent.svId] !== originalMarks[currentStudent.svId] && (
-                      <>
-                        <span style={{ marginLeft: '10px' }}>{getStudentMark(currentStudent.svId)?.point}/100</span>
-                        <button
-                          style={{ marginLeft: '10px', backgroundColor: 'green', color: 'white' }}
-                          onClick={() => handleConfirm(currentStudent.svId)}
-                        >
-                          Xác nhận
-                        </button>
-                        <button
-                          style={{ marginLeft: '5px', backgroundColor: 'red', color: 'white' }}
-                          onClick={() => handleCancel(currentStudent.svId)}
-                        >
-                          Hủy
-                        </button>
-                      </>
-                    )}
+                        <>
+                          <span style={{ marginLeft: '10px' }}>{getStudentMark(currentStudent.svId)?.point}/100</span>
+                          <button
+                            style={{ marginLeft: '10px', backgroundColor: 'green', color: 'white' }}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              handleConfirm(currentStudent.svId);
+                            }}
+                          >
+                            Xác nhận
+                          </button>
+                          <button
+                            style={{ marginLeft: '5px', backgroundColor: 'red', color: 'white' }}
+                            onClick={() => handleCancel(currentStudent.svId)}
+                          >
+                            Hủy
+                          </button>
+                        </>
+                      )}
                   </td>
                 </tr>
               </tbody>

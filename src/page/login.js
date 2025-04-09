@@ -53,13 +53,13 @@ const LoginPage = () => {
             <h2>Login</h2>
             {error && <p className="error-message">{error}</p>}
             <div className="form-group">
-              <label htmlFor="username">Email:</label>
+              <label htmlFor="username">Usename:</label>
               <input
                 id="username"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="Enter your username"
                 required
               />
             </div>

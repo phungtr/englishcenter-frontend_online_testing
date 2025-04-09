@@ -42,7 +42,7 @@ const StudentTeachingPage = () => {
     <div className="teaching-content-page">
       <StudentNavbar />
       <div className="teaching-content-middermidder">
-    <div className="teaching-container" style={{ height:'600px' }}>
+    <div className="teaching-container" style={{ height:'600px',width:'600px' }}>
       <h2 className="heading">Bài giảng dành cho học sinh</h2>
       <p>Lớp của bạn: {className}</p>
 
